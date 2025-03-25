@@ -1,0 +1,14 @@
+.methods {
+  margin: 32px;
+
+  & h1 {
+    margin-bottom: 16px;
+  }
+
+  & select {
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+}

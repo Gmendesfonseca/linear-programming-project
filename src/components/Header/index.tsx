@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import './style.css';
 
 export const Header = () => {
   const path = window.location.pathname;
@@ -9,13 +10,30 @@ export const Header = () => {
     '/problem-description': 'Descrição do Problema',
   };
   return (
-    <header>
+    <header className='header'>
       <h2>{title[path]}</h2>
-      {path !== '/home' && (
-        <Link to={'/home'} replace>
-          Home
-        </Link>
-      )}
+      <div className='paths'>
+        {path !== '/home' && (
+          <Link to={'/home'} replace>
+            Home
+          </Link>
+        )}
+        {path !== '/basic-methods' && (
+          <Link to={'/basic-methods'} replace>
+            Métodos Básicos
+          </Link>
+        )}
+        {path !== '/genetic-algorithms' && (
+          <Link to={'/genetic-algorithms'} replace>
+            Algoritmos Genéticos
+          </Link>
+        )}
+        {path !== '/problem-description' && (
+          <Link to={'/problem-description'} replace>
+            Descrição do Problema
+          </Link>
+        )}
+      </div>
     </header>
   );
 };

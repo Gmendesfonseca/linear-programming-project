@@ -1,11 +1,12 @@
 import { FC, PropsWithChildren } from 'react';
 import { Header } from '../Header';
+import './style.css';
 
 export const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <>
+    <div className='main-layout'>
       <Header />
-      {children}
-    </>
+      <div className='children'>{children}</div>
+    </div>
   );
 };
