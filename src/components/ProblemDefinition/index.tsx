@@ -2,18 +2,31 @@ import { useState } from 'react';
 import { OptionItem } from '../OptionItem';
 import './styles.css';
 
-export const ProblemDefinition = () => {
-  const [option, setOption] = useState<'FIXED' | 'VARIABLE'>('FIXED');
+interface ProblemDefinitionProps {
+  initialOption?: 'FIXED' | 'VARIABLE';
+  onOptionChange?: (option: 'FIXED' | 'VARIABLE') => void;
+}
+
+export const ProblemDefinition = ({
+  initialOption = 'FIXED',
+  onOptionChange,
+}: ProblemDefinitionProps) => {
+  const [option, setOption] = useState<'FIXED' | 'VARIABLE'>(initialOption);
+
   const handleVariableConfig = () => {
     setOption('VARIABLE');
+    onOptionChange?.('VARIABLE');
   };
+
   const handleFixedConfig = () => {
     setOption('FIXED');
+    onOptionChange?.('FIXED');
   };
+
   return (
-    <div className='problem-definition'>
+    <div className="problem-definition">
       <h1>Definição do Problema</h1>
-      <div className='problem-definition-options'>
+      <div className="problem-definition-options">
         <div>
           <OptionItem
             title={'Configuração Fixa'}
@@ -30,14 +43,14 @@ export const ProblemDefinition = () => {
         </div>
       </div>
       {option === 'VARIABLE' && (
-        <div className='variable-config'>
+        <div className="variable-config">
           <div>
             <h3>Tamanho do Problema</h3>
-            <input type='number' />
+            <input type="number" />
           </div>
           <div>
             <h3>Capacidade Máxima</h3>
-            <input type='number' />
+            <input type="number" />
           </div>
         </div>
       )}

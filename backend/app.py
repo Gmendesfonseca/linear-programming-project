@@ -1,6 +1,6 @@
 import random
-from flask import Flask, request, jsonify
-from scipy.optimize import linprog
+# from flask import Flask, request, jsonify
+# from scipy.optimize import linprog
 
 app = Flask(__name__)
 
@@ -46,7 +46,7 @@ def generate_knapsack_problem(n, min,max):
     return m1, m2
 
 @app.route('/calc/knapsack/initial_solution', methods=['POST'])
-def initial_bag_solution(n, max, weight):
+def initial_knapsack_solution(n, max, weight):
     bag = random.sample(range(0, n), n)
     w = 0
     while w <= max:
@@ -58,7 +58,7 @@ def initial_bag_solution(n, max, weight):
     return bag
 
 @app.route('/calc/knapsack/evaluate_solution', methods=['POST'])
-def evaluate_bag_solution(n, solution, m1):
+def evaluate_knapsack_solution(n, solution, m1):
     cost = 0
     weight = 0
     for i in range(n):
