@@ -5,11 +5,15 @@ import './styles.css';
 interface ProblemDefinitionProps {
   initialOption?: 'FIXED' | 'VARIABLE';
   onOptionChange?: (option: 'FIXED' | 'VARIABLE') => void;
+  setMax: (value: number) => void;
+  setProblemLength: (value: number) => void;
 }
 
 export const ProblemDefinition = ({
   initialOption = 'FIXED',
   onOptionChange,
+  setMax,
+  setProblemLength,
 }: ProblemDefinitionProps) => {
   const [option, setOption] = useState<'FIXED' | 'VARIABLE'>(initialOption);
 
@@ -46,11 +50,21 @@ export const ProblemDefinition = ({
         <div className="variable-config">
           <div>
             <h3>Tamanho do Problema</h3>
-            <input type="number" />
+            <input
+              type="number"
+              onChange={(event) => {
+                setProblemLength(Number(event.target.value));
+              }}
+            />
           </div>
           <div>
             <h3>Capacidade Máxima</h3>
-            <input type="number" />
+            <input
+              type="number"
+              onChange={(event) => {
+                setMax(Number(event.target.value));
+              }}
+            />
           </div>
         </div>
       )}

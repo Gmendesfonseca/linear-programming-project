@@ -2,7 +2,6 @@ import { Navigate, RouteObject } from 'react-router-dom';
 import Home from '../pages/Home';
 import BasicMethods from '../pages/BasicMethods';
 import GeneticAlgorithms from '../pages/GeneticAlgorithms';
-import ProblemDescription from '../pages/ProblemDescription';
 
 export type RouteType = {
   path: string;
@@ -33,10 +32,6 @@ export function createRoutes() {
     {
       path: '/genetic-algorithms',
       element: <GeneticAlgorithms />,
-    },
-    {
-      path: '/problem-description',
-      element: <ProblemDescription />,
     },
   ];
 

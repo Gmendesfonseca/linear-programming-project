@@ -16,11 +16,14 @@ const BasicMethods = () => {
     { value: 'method3', label: 'Método 3' },
   ];
   const [, setLoading] = useState(false);
-  const [problemLength] = useState(10);
-  const [max] = useState(100);
-  const [knapsackProblem, setKnapsackProblem] = useState('a');
-  const [initialSolution, setInitialSolution] = useState('b');
-  const [evaluateSolution, setEvaluationSolution] = useState('c');
+  const [problemLength, setProblemLength] = useState(10);
+  const [max, setMax] = useState(100);
+  const [knapsackProblem, setKnapsackProblem] = useState([]);
+  const [initialSolution, setInitialSolution] = useState([]);
+  const [evaluateSolution, setEvaluationSolution] = useState({
+    weight: 0,
+    cost: 0,
+  });
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,13 +33,13 @@ const BasicMethods = () => {
       min: 1,
       max,
     }).then((response) => {
-      setKnapsackProblem(response);
+      setKnapsackProblem(response.weight);
       initialBagSolution({
         n: problemLength,
         max,
         weight: response.weight,
       }).then((solution) => {
-        setInitialSolution(solution);
+        setInitialSolution(solution.bag);
         evaluateBagSolution({
           n: problemLength,
           solution: solution.bag,
@@ -56,30 +59,43 @@ const BasicMethods = () => {
     <MainLayout>
       <form onSubmit={handleSubmit}>
         <ProblemDefinition
+          setProblemLength={setProblemLength}
+          setMax={setMax}
           initialOption="FIXED"
           onOptionChange={(option) => console.log(option)}
         />
         <Methods options={methodOptions} />
-        <button
+        <div
           style={{
-            width: '100px',
-            paddingTop: '8px',
-            paddingLeft: '16px',
-            paddingRight: '16px',
-            paddingBottom: '8px',
-            backgroundColor: '#3d3d3d',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            marginLeft: '32px',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '16px',
           }}
         >
-          Gerar
-        </button>
+          <button
+            style={{
+              width: '200px',
+              padding: '12px 16px',
+              backgroundColor: '#3d3d3d',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '16px',
+            }}
+          >
+            Gerar
+          </button>
+        </div>
       </form>
-      <DataView data={evaluateSolution} />
+      <DataView
+        data={{
+          knapsackProblem,
+          initialSolution,
+          weight: evaluateSolution.weight,
+          cost: evaluateSolution.cost,
+        }}
+      />
     </MainLayout>
   );
 };

@@ -1,39 +1,22 @@
 .main-layout {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 24px;
   width: 100vw;
+  height: 100vh;
   background-color: #f0f0f0;
 }
 
 .children {
-  position: absolute;
   border-radius: 16px;
-  padding: 32px;
-  left: 40%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  height: 90%;
-  width: 800px;
+  height: 780px;
+  width: 1000px;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 1750px) {
-  .children {
-    left: 45%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@media (max-width: 1550px) {
-  .children {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
 }

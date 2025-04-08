@@ -1,14 +1,21 @@
 .methods {
   margin: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   & h1 {
     margin-bottom: 16px;
+    font-size: 1.4rem;
   }
 
   & select {
     padding: 8px 16px;
     background-color: transparent;
-    border: 1px solid #ccc;
-    width: 200px;
+    border: 1px solid #dbdbdb;
+    color: #b9b9b9;
+    width: 430px;
+    border-radius: 4px;
   }
 }

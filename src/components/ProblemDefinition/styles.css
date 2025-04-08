@@ -2,18 +2,21 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 200px;
-  padding: 32px;
+  align-items: center;
+  height: 200px;
+  width: 1000px;
 
   & > h1 {
     margin-bottom: 16px;
+    font-size: 1.4rem;
   }
 
   & .problem-definition-options {
     display: flex;
-    padding-bottom: 16px;
-    gap: 16px;
+    padding-bottom: 8px;
+    gap: 32px;
     margin-bottom: 16px;
+    text-align: center;
   }
 
   & .problem-definition-options > div {
@@ -38,9 +41,13 @@
 
   & > div > input {
     width: 100%;
-    padding: 8px 4px;
+    padding: 4px 4px;
     margin-top: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
+  }
+
+  & > div > h3 {
+    text-align: center;
   }
 }

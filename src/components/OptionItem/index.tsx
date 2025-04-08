@@ -10,9 +10,9 @@ export const OptionItem = ({ title, checked, handleClick }: OptionsProps) => {
   return (
     <>
       <input
-        className='option-item'
-        type='checkbox'
-        id='problem-definition'
+        className="option-item"
+        type="checkbox"
+        id="problem-definition"
         onClick={handleClick}
         checked={checked}
       />
