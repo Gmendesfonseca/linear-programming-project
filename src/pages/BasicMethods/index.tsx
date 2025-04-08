@@ -39,8 +39,8 @@ const BasicMethods = () => {
         setInitialSolution(solution);
         evaluateBagSolution({
           n: problemLength,
-          solution,
-          m1: response.m1,
+          solution: solution.bag,
+          max,
         }).then((evaluationResponse) => {
           setEvaluationSolution(evaluationResponse);
           setLoading(false);
@@ -62,7 +62,7 @@ const BasicMethods = () => {
         <Methods options={methodOptions} />
         <button
           style={{
-            width: '90%',
+            width: '100px',
             paddingTop: '8px',
             paddingLeft: '16px',
             paddingRight: '16px',

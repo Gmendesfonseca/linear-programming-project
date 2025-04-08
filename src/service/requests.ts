@@ -39,7 +39,7 @@ export async function generateKnapsackProblem({
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n, min, max }),
+    body: JSON.stringify({ n: n, min: min, max: max }),
   });
   const data = await response.json();
   return data;
@@ -55,7 +55,7 @@ export async function initialBagSolution({
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n, max, weight }),
+    body: JSON.stringify({ n: n, max: max, weight: weight }),
   });
   const data = await response.json();
   return data;
@@ -64,14 +64,14 @@ export async function initialBagSolution({
 export async function evaluateBagSolution({
   n,
   solution,
-  m1,
+  max,
 }: EvaluateBagSolutionParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/evaluate_solution`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n, solution, m1 }),
+    body: JSON.stringify({ n, solution, max }),
   });
   const data = await response.json();
   return data;

@@ -20,5 +20,5 @@ export type InitialBagSolutionParams = {
 export type EvaluateBagSolutionParams = {
   n: number;
   solution: number[];
-  m1: number[];
+  max: number;
 };

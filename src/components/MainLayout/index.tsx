@@ -4,9 +4,9 @@ import './style.css';
 
 export const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className='main-layout'>
+    <div className="main-layout">
       <Header />
-      <div className='children'>{children}</div>
+      <div className="children">{children}</div>
     </div>
   );
 };
