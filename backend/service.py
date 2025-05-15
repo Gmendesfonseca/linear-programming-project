@@ -1,6 +1,6 @@
 import random
 import math
-from scipy.optimize import linprog
+from scipy.optimize import linprog # type: ignore
 
 # SIMPLEX METHOD
 def simplex_method(l_in, r_in, z, l_eq=None, r_eq=None, l_x=None):
@@ -53,7 +53,7 @@ def generate_knapsack_problem(n, min_weight, max_weight, max_weights):
         knapsack_costs = []
         total_weight = 0
 
-        for _ in range(n[i]):
+        for item in range(n[i]):
             # Generate a random weight for the item within the allowed range
             item_weight = random.randint(min_weight, max_weight)
 
@@ -162,6 +162,8 @@ def successors(actual_solution, actual_cost, max_weight, n, weights, costs):
     return better_successors
 
 # SLOPE CLIMBING METHOD
+# Max: VN>=VA => FALSO. Portanto, continuar
+# Min: VN<=VA => FALSO. Portanto, continuar
 def slope_climbing_method(n, max_weights, weights, costs, solutions):
     """
     Perform slope climbing for a multiple-knapsack problem.
@@ -201,6 +203,10 @@ def slope_climbing_method(n, max_weights, weights, costs, solutions):
     return solutions, current_costs, current_weights
 
 # SLOPE CLIMB WITH TRY AGAIN
+# Max: VN>=VA => FALSO. Portanto, continuar e T = 0
+# Max: VN<=VA => Verdadeiro. Portanto, continuar e T = T + 1
+# Min: VN<=VA => FALSO. Portanto, continuar e T = 0
+# Min: VN>=VA => Verdadeiro. Portanto, continuar e T = T + 1
 def slope_climb_try_again_method(n, max_weights, weights, costs, solutions, Tmax=10):
     """
     Perform slope climbing for a multiple-knapsack problem with retry logic.
@@ -253,6 +259,8 @@ def slope_climb_try_again_method(n, max_weights, weights, costs, solutions, Tmax
     return solutions, current_costs, current_weights
 
 # TEMPERATURE METHOD
+# Max: de = VA - VN
+# Min: de = VN - VA
 def tempera(n, s, v, items, ti, tf,fr):
     atual = s[:]
     va = v

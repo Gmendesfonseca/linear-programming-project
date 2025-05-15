@@ -1,6 +1,6 @@
 import service
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify # type: ignore
+from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
 CORS(app)
@@ -166,6 +166,37 @@ def slope_climb_knapsack_try_again():
         'costs': current_costs,
         'weights': current_weights
     })
+
+@app.route('/calc/knapsack/tempera', methods=['POST'])
+def tempera_knapsack():
+    """
+    Perform simulated annealing for a multiple-knapsack problem.
+    """
+    data: dict = request.get_json()
+
+    n = data['n']
+    max_weights = data['max_weights']
+    weights = data['weights']
+    costs = data['costs']
+    solutions = data['solutions']
+    Tmax = data.get('Tmax', 10)
+
+    atual, va  = service.tempera_method(
+        n=n,
+        max_weights=max_weights,
+        weights=weights,
+        costs=costs,
+        solutions=solutions,
+        Tmax=Tmax
+    )
+    return jsonify({
+        'solutions': atual,
+        'costs': va
+    })
+
+@app.route('/calc/knapsack/all', methods=['POST'])
+def all_methods_knapsack():
+    return 0
 
 if __name__ == '__main__':
     app.run(debug=True)

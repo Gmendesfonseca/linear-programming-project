@@ -1,0 +1,3 @@
+Passo 1: Instalar o Node.js
+Passo 2: Instalar o Python 3
+Passo 3: Rodar o bash script run.sh com o comando: bash run.sh
