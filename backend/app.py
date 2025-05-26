@@ -1,202 +1,220 @@
+import logging
+from typing import Any, Dict
 import service
-from flask import Flask, request, jsonify # type: ignore
+from flask import Flask, request, jsonify, abort # type: ignore
 from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
 CORS(app)
 
+logging.basicConfig(level=logging.INFO)
+
 @app.route('/', methods=['GET'])
-def index():
-    return "Health Check: The server is running!"
+def index() -> str:
+    """Health check endpoint."""
+    return "<strong>Health Check:</strong> The server is running!"
+
+def get_json_data() -> Dict[str, Any]:
+    """Safely get JSON data from request."""
+    data = request.get_json()
+    if data is None:
+        abort(400, description="Invalid or missing JSON data.")
+    return data
 
 @app.route('/calc/simplex', methods=['POST'])
-def simplex():
-    """
-    Solve a linear programming problem using the simplex method."""
-    data: dict = request.get_json()
-    
-    l_in: list = data['coefficient_inequality']
-    r_in: list = data['right_hand_inequality']
-    z: list = data['objective']
-    l_eq = data.get('coefficient_equality')
-    r_eq = data.get('right_hand_equality')
-    l_x = data.get('bounds', []) 
+def simplex() -> Any:
+    """Solve a linear programming problem using the simplex method."""
+    data = get_json_data()
+    try:
+        l_in = data['coefficient_inequality']
+        r_in = data['right_hand_inequality']
+        z = data['objective']
+        l_eq = data.get('coefficient_equality')
+        r_eq = data.get('right_hand_equality')
+        l_x = data.get('bounds', [])
 
-    result = service.simplex_method(
-        l_in=l_in,
-        r_in=r_in,
-        z=z,
-        l_eq=l_eq,
-        r_eq=r_eq,
-        l_x=l_x
-    )
-
-    return jsonify(result)
+        result = service.simplex_method(
+            l_in=l_in,
+            r_in=r_in,
+            z=z,
+            l_eq=l_eq,
+            r_eq=r_eq,
+            l_x=l_x
+        )
+        return jsonify(result)
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in simplex: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/problem', methods=['POST'])
-def generate_knapsack_problem():
-    """
-    Generate a multiple-knapsack problem where multiple knapsacks are treated as one.
-    """
+def generate_knapsack_problem() -> Any:
+    """Generate a multiple-knapsack problem."""
+    data = get_json_data()
     try:
-        data: dict = request.get_json()
-
         n = data['knapsacks_length']
         min_weight = data['minimum_weight']
         max_weight = data['maximum_weight']
         max_weights = data['max_weights']
 
-        weights,costs =  service.generate_knapsack_problem(n, min_weight, max_weight, max_weights)
-        
+        weights, costs = service.generate_knapsack_problem(n, min_weight, max_weight, max_weights)
         combined_problem = {
             'n': n,
             'min_weight': min_weight,
             'max_weights': max_weights,
             'weights': weights,
-            'costs':costs,
+            'costs': costs,
         }
-
         return jsonify({'problem': combined_problem})
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error in generate_knapsack_problem: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/initial_solution', methods=['POST'])
-def initial_knapsack_solution():
-    """
-    Generate an initial solution for a multiple-knapsack problem.
-    """
+def initial_knapsack_solution() -> Any:
+    """Generate an initial solution for a multiple-knapsack problem."""
+    data = get_json_data()
     try:
-        data: dict = request.get_json()
-
-        n = data['knapsacks_length'] 
-        max_weights = data['max_weights']  
-        weights = data['weights']  
+        n = data['knapsacks_length']
+        max_weights = data['max_weights']
+        weights = data['weights']
 
         solutions = service.initial_solution(
-            n=n,  
-            max_weights=max_weights, 
-            weights=weights  
+            n=n,
+            max_weights=max_weights,
+            weights=weights
         )
-    
         return jsonify({'solutions': solutions})
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error in initial_knapsack_solution: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/evaluate_solution', methods=['POST'])
-def evaluate_knapsack_solution():
-    """
-    Evaluate the total cost and weight of solutions for a multiple-knapsack problem.
-    """
+def evaluate_knapsack_solution() -> Any:
+    """Evaluate the total cost and weight of solutions for a multiple-knapsack problem."""
+    data = get_json_data()
     try:
-        data: dict = request.get_json()
-
-        bags = data['bags'] 
-
+        bags = data['bags']
         costs = []
         weights = []
-
-        for i in range(len(bags)):
+        for bag in bags:
             cost, weight = service.evaluate_solution(
-                solution=bags[i]['solution'],
-                weights=bags[i]['weights'], 
-                costs=bags[i]['costs']
+                solution=bag['solution'],
+                weights=bag['weights'],
+                costs=bag['costs']
             )
             costs.append(cost)
             weights.append(weight)
-
-        return jsonify({
-            'costs': costs,
-            'weights': weights
-        })
+        return jsonify({'costs': costs, 'weights': weights})
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(f"Error in evaluate_knapsack_solution: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/slope_climb', methods=['POST'])
-def slope_climb_knapsack():
-    """
-    Perform slope climbing for a multiple-knapsack problem.
-    """
-    data: dict = request.get_json()
+def slope_climb_knapsack() -> Any:
+    """Perform slope climbing for a multiple-knapsack problem."""
+    data = get_json_data()
+    try:
+        n = data['n']
+        max_weights = data['max_weights']
+        weights = data['weights']
+        costs = data['costs']
+        solutions = data['solutions']
 
-    n = data['n']
-    max_weights = data['max_weights']  
-    weights = data['weights'] 
-    costs = data['costs']
-    solutions = data['solutions']  # 
-
-    solutions, current_costs, current_weights = service.slope_climbing_method(
-        n=n,  
-        max_weights=max_weights, 
-        weights=weights, 
-        costs=costs, 
-        solutions=solutions
-    )
-        
-    return jsonify({
-        'solutions': solutions,
-        'costs': current_costs,
-        'weights': current_weights
-    })
+        solutions, current_costs, current_weights = service.slope_climbing_method(
+            n=n,
+            max_weights=max_weights,
+            weights=weights,
+            costs=costs,
+            solutions=solutions
+        )
+        return jsonify({
+            'solutions': solutions,
+            'costs': current_costs,
+            'weights': current_weights
+        })
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in slope_climb_knapsack: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/slope_climb_try_again', methods=['POST'])
-def slope_climb_knapsack_try_again():
-    """
-    Perform slope climbing for a multiple-knapsack problem with retry logic.
-    """
-    data: dict = request.get_json()
+def slope_climb_knapsack_try_again() -> Any:
+    """Perform slope climbing for a multiple-knapsack problem with retry logic."""
+    data = get_json_data()
+    try:
+        n = data['n']
+        max_weights = data['max_weights']
+        weights = data['weights']
+        costs = data['costs']
+        solutions = data['solutions']
+        Tmax = data.get('Tmax', 10)
 
-    n = data['n']
-    max_weights = data['max_weights']
-    weights = data['weights']
-    costs = data['costs']
-    solutions = data['solutions']
-    Tmax = data.get('Tmax', 10)  # Maximum retries (default to 10 if not provided)
-
-    solutions, current_costs, current_weights = service.slope_climb_try_again_method(
-        n=n,
-        max_weights=max_weights,
-        weights=weights,
-        costs=costs,
-        solutions=solutions,
-        Tmax=Tmax
-    )
-
-    return jsonify({
-        'solutions': solutions,
-        'costs': current_costs,
-        'weights': current_weights
-    })
+        solutions, current_costs, current_weights = service.slope_climb_try_again_method(
+            n=n,
+            max_weights=max_weights,
+            weights=weights,
+            costs=costs,
+            solutions=solutions,
+            Tmax=Tmax
+        )
+        return jsonify({
+            'solutions': solutions,
+            'costs': current_costs,
+            'weights': current_weights
+        })
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in slope_climb_knapsack_try_again: {e}")
+        abort(500, description=str(e))
 
 @app.route('/calc/knapsack/tempera', methods=['POST'])
-def tempera_knapsack():
-    """
-    Perform simulated annealing for a multiple-knapsack problem.
-    """
-    data: dict = request.get_json()
+def tempera_knapsack() -> Any:
+    """Perform simulated annealing for a multiple-knapsack problem."""
+    data = get_json_data()
+    try:
+        n = data['n']
+        max_weights = data['max_weights']
+        weights = data['weights']
+        costs = data['costs']
+        solutions = data['solutions']
+        Tmax = data.get('Tmax', 10)
 
-    n = data['n']
-    max_weights = data['max_weights']
-    weights = data['weights']
-    costs = data['costs']
-    solutions = data['solutions']
-    Tmax = data.get('Tmax', 10)
+        atual, va = service.tempera_method(
+            n=n,
+            max_weights=max_weights,
+            weights=weights,
+            costs=costs,
+            solutions=solutions,
+            Tmax=Tmax
+        )
+        return jsonify({'solutions': atual, 'costs': va})
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in tempera_knapsack: {e}")
+        abort(500, description=str(e))
 
-    atual, va  = service.tempera_method(
-        n=n,
-        max_weights=max_weights,
-        weights=weights,
-        costs=costs,
-        solutions=solutions,
-        Tmax=Tmax
-    )
-    return jsonify({
-        'solutions': atual,
-        'costs': va
-    })
-
-@app.route('/calc/knapsack/all', methods=['POST'])
-def all_methods_knapsack():
-    return 0
+# Remove or implement this endpoint as needed
+# @app.route('/calc/knapsack/all', methods=['POST'])
+# def all_methods_knapsack():
+#     abort(501, description="Not implemented.")
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -37,13 +37,13 @@ def simplex_method(l_in, r_in, z, l_eq=None, r_eq=None, l_x=None):
 # GENERAL FUNCTIONS
 def generate_knapsack_problem(n, min_weight, max_weight, max_weights):
     """
-    Generate a multiple-knapsack problem where multiple knapsacks are treated as one.
+    Gera um problema de mochila múltipla com limitação de peso e custo.
 
-    :param n: List of the number of items in each knapsack.
-    :param min_weight: Minimum weight of items.
-    :param max_weight: Maximum weight of items.
-    :param max_weights: List of maximum weights for each knapsack.
-    :return: A tuple containing the weights and costs of the items.
+    :param n: Lista de número de itens de cada mochila.
+    :param min_weight: Peso mínimo de cada item.
+    :param max_weight: Peso máximo de cada item.
+    :param max_weights: Lista de máximo de peso de cada mochila.
+    :return: Uma lista com listas de pesos e uma lista com listas de custos dos itens para cada mochila.
     """
     weights = []
     costs = []
@@ -53,16 +53,16 @@ def generate_knapsack_problem(n, min_weight, max_weight, max_weights):
         knapsack_costs = []
         total_weight = 0
 
-        for item in range(n[i]):
-            # Generate a random weight for the item within the allowed range
+        for _ in range(n[i]):
+            # Escolhe uma peso aleatória entre o peso mínimo e máximo
             item_weight = random.randint(min_weight, max_weight)
 
-            # Ensure the total weight does not exceed the knapsack's max weight
+            # Verifica se o peso total não excede o peso máximo da mochila
             if total_weight + item_weight <= max_weights[i]:
                 knapsack_weights.append(item_weight)
                 total_weight += item_weight
             else:
-                # If adding the item exceeds the max weight, add a smaller item
+                # Se o peso total exceder, adiciona o peso restante
                 remaining_weight = max_weights[i] - total_weight
                 if remaining_weight > 0:
                     knapsack_weights.append(remaining_weight)
@@ -80,98 +80,99 @@ def generate_knapsack_problem(n, min_weight, max_weight, max_weights):
 
 def generate_initial_solution(n, max_weights, weights):
     """
-    Generate an initial solution for a multiple-knapsack problem.
+    Gera uma solução inicial aleatória para o problema da mochila múltipla.
 
-    :param n: List of the number of items in each knapsack.
-    :param max_weights: List of maximum weights for each knapsack.
-    :param weights: List of lists of item weights for each knapsack.
-    :return: A list of initial solutions for each knapsack.
+    :param n: Lista de número de itens de cada mochila.
+    :param max_weights: Lista de máximo de peso de cada mochila.
+    :param weights: Lista de pesos dos itens para cada mochila.
+    :return: Lista de listas de soluções iniciais para cada mochila.
     """
     solutions = []
-    for k in range(len(n)):  # Iterate over each knapsack
-        bag = [0] * n[k]  # Initialize the solution for the current knapsack
+    total_knapsacks = len(n)
+    for k in range(total_knapsacks):
+        knapsack = [0] * n[k]  # Inicializa a mochila com 0s
         total_weight = 0
 
-        # Add items to the knapsack randomly until the weight exceeds max_weight
+        # Adiciona itens aleatórios à mochila até atingir o peso máximo
         while total_weight <= max_weights[k]:
-            item = random.randint(0, n[k] - 1)  # Pick a random item
-            if bag[item] == 0:  # If the item is not already in the knapsack
-                bag[item] = 1  # Add the item to the knapsack
-                total_weight += weights[k][item]  # Update the total weight
+            item = random.randint(0, n[k] - 1)  # Escolhe um item aleatório
+            if knapsack[item] == 0:  # Verifica se o item já está na mochila
+                knapsack[item] = 1  # Se não estiver, adiciona o item
+                total_weight += weights[k][item]  # Atualiza o peso total
 
-        solutions.append(bag)
+        solutions.append(knapsack)
 
     return solutions
 
 def evaluate_solution(solution, weights, costs):
     """
-    Evaluate the total cost and weight of a solution for the knapsack problem.
+    Avalia o custo total e o peso de uma solução para o problema da mochila.
 
-    Parameters:
-    - solution: List of 0s and 1s representing the items included in the knapsack.
-    - weights: List of weights for the items.
-    - costs: List of costs for the items.
+    :param solution: Lista de 0s e 1s representando a solução (itens incluídos/excluídos).
+    :param weights: Lista de pesos dos itens.
+    :param costs: Lista de custos dos itens.
 
-    Returns:
-    - A tuple containing the total cost and total weight of the solution.
+    :return: Uma tupla contendo o custo total e o peso total da solução.
     """
     total_cost = sum(solution[i] * costs[i] for i in range(len(solution)))
     total_weight = sum(solution[i] * weights[i] for i in range(len(solution)))
     return total_cost, total_weight
 
-# SUCCESSORS FUNCTION
-def successors(actual_solution, actual_cost, max_weight, n, weights, costs):
+# SLOPE CLIMBING SUCCESSORS FUNCTION
+def successors(actual_solution, actual_cost, actual_weight, max_weight, n, weights, costs):
     """
-    Generate and evaluate successors for the knapsack problem.
+    Gera e avalia soluções sucessoras para o problema da mochila.
 
-    Parameters:
-    - actual_solution: Current solution (list of 0s and 1s).
-    - actual_cost: Current total cost of the solution.
-    - actual_weight: Current total weight of the solution.
-    - max_weight: Maximum weight allowed for the knapsack.
-    - n: Number of items.
-    - weights: List of weights for the items.
-    - costs: List of costs for the items.
-
-    Returns:
-    - A list of better successor solutions.
+    :param actual_solution: Lista de 0s e 1s representando a solução atual (itens incluídos/excluídos).
+    :param actual_cost: Custo da solução atual.
+    :param actual_weight: Peso da solução atual.
+    :param max_weight: Peso máximo permitido.
+    :param n: Número de itens na solução atual.
+    :param weights: Lista de pesos dos itens.
+    :param costs: Lista de custos dos itens.
+    :return: Lista com uma solução melhorada.
     """
     qs = 2 * len(actual_solution)  
-    better_successors = []
+    p = 0
+    best_successor = actual_solution[:]
+    best_cost = actual_cost
+    best_weight = actual_weight
 
     for _ in range(qs):
-        aux = actual_solution.copy()
+        aux = actual_solution[:]
+        total_cost, total_weight = evaluate_solution(aux, weights, costs)
         while True:
-            # Randomly toggle an item in the solution
             p = random.randint(0, len(aux) - 1)
-            aux[p] = 1 - aux[p]  # Flip the bit (0 -> 1 or 1 -> 0)
-
-            # Calculate the new weight and cost
-            new_weight = sum(aux[i] * weights[i] for i in range(n))
-            new_cost = sum(aux[i] * costs[i] for i in range(n))
-
-            # Check if the new solution is valid and better
-            if new_weight <= max_weight and new_cost > actual_cost:
-                better_successors.append({
-                    'solution': aux,
-                    'cost': new_cost,
-                    'weight': new_weight
-                })
-                break  # Stop modifying this solution and move to the next
-
-    return better_successors
+            if (aux[p] == 1):
+                aux[p] = 0  # Reverte a troca se o item foi adicionado
+                total_cost, total_weight = evaluate_solution(aux, weights, costs)
+                break
+        k = p + 1
+        for j in range(len(aux)):
+            if k >= len(aux):
+                k = 0
+            aux[k] = 1
+            total_cost, total_weight = evaluate_solution(aux, weights, costs)
+            if (total_weight > max_weight):
+                aux[k] = 0
+            k += 1
+        total_cost, total_weight = evaluate_solution(aux, weights, costs)
+        if (total_weight <= max_weight and total_cost > actual_cost):
+            best_successor = aux[:]
+            best_cost = total_cost
+            best_weight = total_weight
+            
+    return [{'solution': best_successor, 'cost': best_cost, 'weight': best_weight}]
 
 # SLOPE CLIMBING METHOD
-# Max: VN>=VA => FALSO. Portanto, continuar
-# Min: VN<=VA => FALSO. Portanto, continuar
 def slope_climbing_method(n, max_weights, weights, costs, solutions):
     """
     Perform slope climbing for a multiple-knapsack problem.
     
-    :param n: List of the number of items in each knapsack.
-    :param max_weights: List of maximum weights for each knapsack.
-    :param weights: List of lists of item weights for each knapsack.
-    :param costs: List of lists of item costs for each knapsack.
+    :param n: Lista de número de itens em cada mochila.
+    :param max_weights: Lista de máximo de peso para cada mochila.
+    :param weights: Lista de listas de pesos dos itens para cada mochila.
+    :param costs: Lista de listas de custos dos itens para cada mochila.
     :return: A list of solutions for each knapsack.
     """
     current_costs = []
@@ -183,30 +184,10 @@ def slope_climbing_method(n, max_weights, weights, costs, solutions):
     improved = True
     while improved:
         improved = False
-        for k in range(len(solutions)):  
-            better_successors = successors(
-                actual_solution=solutions[k],
-                actual_cost=current_costs[k],
-                actual_weight=current_weights[k],
-                max_weight=max_weights[k],
-                n=n[k],
-                weights=weights[k],
-                costs=costs[k]
-            )
-
-            if better_successors:
-                best_successor = max(better_successors, key=lambda x: x['cost'])
-                solutions[k] = best_successor['solution']
-                current_costs[k] = best_successor['cost']
-                current_weights[k] = best_successor['weight']
-                improved = True  
+        
     return solutions, current_costs, current_weights
 
 # SLOPE CLIMB WITH TRY AGAIN
-# Max: VN>=VA => FALSO. Portanto, continuar e T = 0
-# Max: VN<=VA => Verdadeiro. Portanto, continuar e T = T + 1
-# Min: VN<=VA => FALSO. Portanto, continuar e T = 0
-# Min: VN>=VA => Verdadeiro. Portanto, continuar e T = T + 1
 def slope_climb_try_again_method(n, max_weights, weights, costs, solutions, Tmax=10):
     """
     Perform slope climbing for a multiple-knapsack problem with retry logic.
@@ -259,15 +240,13 @@ def slope_climb_try_again_method(n, max_weights, weights, costs, solutions, Tmax
     return solutions, current_costs, current_weights
 
 # TEMPERATURE METHOD
-# Max: de = VA - VN
-# Min: de = VN - VA
 def tempera(n, s, v, items, ti, tf,fr):
     atual = s[:]
     va = v
     t = ti
     while t > tf:
         novo, vn = successor(n, atual, items)
-        de = vn - va
+        de = va - vn
         if de < 0:
             atual = novo[:]
             va = vn
@@ -280,6 +259,7 @@ def tempera(n, s, v, items, ti, tf,fr):
         t = t * fr
     return atual, va 
 
+# TEMPERATURE METHOD SUCCESSOR
 def successor(n, atual, items):
     """
     Generate a successor solution for the knapsack problem.
