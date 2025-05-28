@@ -84,11 +84,7 @@ def initial_knapsack_solution() -> Any:
         max_weights = data['max_weights']
         weights = data['weights']
 
-        solutions = service.initial_solution(
-            n=n,
-            max_weights=max_weights,
-            weights=weights
-        )
+        solutions = service.generate_initial_solution(n, max_weights, weights)
         return jsonify({'solutions': solutions})
     except KeyError as e:
         logging.error(f"Missing key: {e}")
@@ -132,17 +128,18 @@ def slope_climb_knapsack() -> Any:
         costs = data['costs']
         solutions = data['solutions']
 
-        solutions, current_costs, current_weights = service.slope_climbing_method(
-            n=n,
-            max_weights=max_weights,
-            weights=weights,
-            costs=costs,
-            solutions=solutions
+        # Calculate current_values for each solution
+        current_values = [
+            service.evaluate_solution(solutions[i], weights[i], costs[i])
+            for i in range(len(solutions))
+        ]
+
+        solutions, current_values = service.slope_climbing_method(
+            solutions, current_values, weights, costs, max_weights
         )
         return jsonify({
             'solutions': solutions,
-            'costs': current_costs,
-            'weights': current_weights
+            'current_values': current_values
         })
     except KeyError as e:
         logging.error(f"Missing key: {e}")
@@ -163,18 +160,18 @@ def slope_climb_knapsack_try_again() -> Any:
         solutions = data['solutions']
         Tmax = data.get('Tmax', 10)
 
-        solutions, current_costs, current_weights = service.slope_climb_try_again_method(
-            n=n,
-            max_weights=max_weights,
-            weights=weights,
-            costs=costs,
-            solutions=solutions,
-            Tmax=Tmax
+        # Calculate current_values for each solution
+        current_values = [
+            service.evaluate_solution(solutions[i], weights[i], costs[i])
+            for i in range(len(solutions))
+        ]
+
+        solutions, current_values = service.slope_climb_try_again_method(
+            solutions, current_values, weights, costs, max_weights, Tmax
         )
         return jsonify({
             'solutions': solutions,
-            'costs': current_costs,
-            'weights': current_weights
+            'current_values': current_values
         })
     except KeyError as e:
         logging.error(f"Missing key: {e}")
@@ -211,10 +208,54 @@ def tempera_knapsack() -> Any:
         logging.error(f"Error in tempera_knapsack: {e}")
         abort(500, description=str(e))
 
-# Remove or implement this endpoint as needed
-# @app.route('/calc/knapsack/all', methods=['POST'])
-# def all_methods_knapsack():
-#     abort(501, description="Not implemented.")
+@app.route('/calc/knapsack/all', methods=['POST'])
+def all_methods_knapsack():
+    """Run all knapsack methods and return results."""
+    data = get_json_data()
+    try:
+        n = data['n']
+        max_weights = data['max_weights']
+        weights = data['weights']
+        costs = data['costs']
+        solutions = data['solutions']
+        Tmax = data.get('Tmax', 10)
+
+        slope_climb_solutions, slope_climb_values = service.slope_climbing_method(
+            solutions, [], weights, costs, max_weights
+        )
+        slope_climb_try_solutions, slope_climb_try_values = service.slope_climb_try_again_method(
+            solutions, [], weights, costs, max_weights, Tmax
+        )
+        tempera_solutions, tempera_values = service.tempera_method(
+            n=n,
+            max_weights=max_weights,
+            weights=weights,
+            costs=costs,
+            solutions=solutions,
+            Tmax=Tmax
+        )
+
+        return jsonify({
+            'initial_solutions': solutions,
+            'slope_climb': {
+                'solutions': slope_climb_solutions,
+                'values': slope_climb_values
+            },
+            'slope_climb_try': {
+                'solutions': slope_climb_try_solutions,
+                'values': slope_climb_try_values
+            },
+            'tempera': {
+                'solutions': tempera_solutions,
+                'values': tempera_values
+            }
+        })
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in all_methods_knapsack: {e}")
+        abort(500, description=str(e))
 
 if __name__ == '__main__':
     app.run(debug=True)
