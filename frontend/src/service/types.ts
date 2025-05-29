@@ -6,19 +6,45 @@ export type CalcParams = {
 };
 
 export type GenerateKnapsackProblemParams = {
-  n: number;
-  min: number;
-  max: number;
+  knapsacks_length: number;
+  min_weight: number;
+  max_weight: number;
+  max_weights: number[];
 };
 
 export type InitialBagSolutionParams = {
-  n: number;
-  max: number;
-  weight: number[];
+  knapsacks_length: number;
+  weights: number;
+  max_weights: number[];
 };
 
 export type EvaluateBagSolutionParams = {
-  n: number;
-  solution: number[];
-  max: number;
+  bags: {
+    solution: number[];
+    weights: number[];
+    costs: number[];
+  }[];
+};
+
+export type SlopeClimbingParams = {
+  solutions: number[];
+  weights: number[];
+  costs: number[];
+  max_weights: number[];
+  current_values: number[];
+};
+
+export type SlopeClimbingTryParams = {
+  Tmax: number;
+} & SlopeClimbingParams;
+
+export type TemperatureParams = {
+  costs: number[];
+  weights: number[];
+  solutions: number[];
+  max_weights: number[];
+  reducer_factor: number;
+  initial_temperature: number;
+  final_temperature: number;
+  Tmax: number;
 };

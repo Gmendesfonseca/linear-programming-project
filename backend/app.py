@@ -175,9 +175,9 @@ def tempera_knapsack() -> Any:
         weights = data['weights']
         solutions = data['solutions']
         max_weights = data['max_weights']
-        fr= data.get('fr', 0.95)
-        ti= data.get('ti', 0.01)
-        tf = data.get('tf', 0.01)
+        fr= data.get('reducer_factor', 0.95)
+        ti= data.get('initial_temperature', 0.01)
+        tf = data.get('final_temperature', 0.01)
         Tmax = data.get('Tmax', 10)
         current_values = data.get('current_values', [])
         

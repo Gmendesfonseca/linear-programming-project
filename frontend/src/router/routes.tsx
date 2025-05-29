@@ -1,7 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom';
-import Home from '../pages/Home';
-import BasicMethods from '../pages/BasicMethods';
-import GeneticAlgorithms from '../pages/GeneticAlgorithms';
+import Home from '@/pages/Home';
+import BasicMethods from '@/pages/BasicMethods';
+import GeneticAlgorithms from '@/pages/GeneticAlgorithms';
 
 export type RouteType = {
   path: string;
