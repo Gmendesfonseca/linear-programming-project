@@ -28,9 +28,9 @@ export const ProblemDefinition = ({
   };
 
   return (
-    <div className="problem-definition">
+    <div className='problem-definition'>
       <h1>Definição do Problema</h1>
-      <div className="problem-definition-options">
+      <div className='problem-definition-options'>
         <div>
           <OptionItem
             title={'Configuração Fixa'}
@@ -47,11 +47,11 @@ export const ProblemDefinition = ({
         </div>
       </div>
       {option === 'VARIABLE' && (
-        <div className="variable-config">
+        <div className='variable-config'>
           <div>
             <h3>Tamanho do Problema</h3>
             <input
-              type="number"
+              type='number'
               onChange={(event) => {
                 setProblemLength(Number(event.target.value));
               }}
@@ -60,7 +60,7 @@ export const ProblemDefinition = ({
           <div>
             <h3>Capacidade Máxima</h3>
             <input
-              type="number"
+              type='number'
               onChange={(event) => {
                 setMax(Number(event.target.value));
               }}

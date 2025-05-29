@@ -76,3 +76,33 @@ export async function evaluateBagSolution({
   const data = await response.json();
   return data;
 }
+
+export async function sendSlopeClimbingData({
+  max_weights,
+  weights,
+  costs,
+  solutions,
+  current_values,
+}: {
+  max_weights: number[];
+  weights: number[];
+  costs: number[];
+  solutions: number[];
+  current_values: number[];
+}) {
+  const response = await fetch(`${BASE_URL}/calc/knapsack/slope_climb`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      max_weights,
+      weights,
+      costs,
+      solutions,
+      current_values,
+    }),
+  });
+  const data = await response.json();
+  return data;
+}

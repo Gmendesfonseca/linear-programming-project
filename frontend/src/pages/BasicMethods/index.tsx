@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { DataView } from '../../components/DataView';
+import { DataView } from './components/DataView';
 import { MainLayout } from '../../components/MainLayout';
-import { Methods } from '../../components/Methods';
-import { ProblemDefinition } from '../../components/ProblemDefinition';
+import { Methods } from './components/Methods';
+import { ProblemDefinition } from './components/ProblemDefinition';
 import {
   evaluateBagSolution,
   generateKnapsackProblem,
@@ -61,7 +61,7 @@ const BasicMethods = () => {
         <ProblemDefinition
           setProblemLength={setProblemLength}
           setMax={setMax}
-          initialOption="FIXED"
+          initialOption='FIXED'
           onOptionChange={(option) => console.log(option)}
         />
         <Methods options={methodOptions} />
