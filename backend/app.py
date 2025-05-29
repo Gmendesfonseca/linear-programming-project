@@ -61,7 +61,7 @@ def generate_knapsack_problem() -> Any:
 
         weights, costs = service.generate_knapsack_problem(n, min_weight, max_weight, max_weights)
         combined_problem = {
-            'n': n,
+            'knapsacks_length': n,
             'min_weight': min_weight,
             'max_weights': max_weights,
             'weights': weights,
@@ -81,8 +81,8 @@ def initial_knapsack_solution() -> Any:
     data = get_json_data()
     try:
         n = data['knapsacks_length']
-        max_weights = data['max_weights']
         weights = data['weights']
+        max_weights = data['max_weights']
 
         solutions = service.generate_initial_solution(n, max_weights, weights)
         return jsonify({'solutions': solutions})
@@ -99,17 +99,15 @@ def evaluate_knapsack_solution() -> Any:
     data = get_json_data()
     try:
         bags = data['bags']
-        costs = []
-        weights = []
+        current_values = []
         for bag in bags:
-            cost, weight = service.evaluate_solution(
+            current_value = service.evaluate_solution(
                 solution=bag['solution'],
                 weights=bag['weights'],
                 costs=bag['costs']
             )
-            costs.append(cost)
-            weights.append(weight)
-        return jsonify({'costs': costs, 'weights': weights})
+            current_values.append(current_value)
+        return jsonify({'current_values': current_values})
     except KeyError as e:
         logging.error(f"Missing key: {e}")
         abort(400, description=f"Missing key: {e}")
@@ -122,7 +120,6 @@ def slope_climb_knapsack() -> Any:
     """Perform slope climbing for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        n = data['n']
         max_weights = data['max_weights']
         weights = data['weights']
         costs = data['costs']
@@ -148,10 +145,10 @@ def slope_climb_knapsack_try_again() -> Any:
     """Perform slope climbing for a multiple-knapsack problem with retry logic."""
     data = get_json_data()
     try:
-        max_weights = data['max_weights']
-        weights = data['weights']
         costs = data['costs']
+        weights = data['weights']
         solutions = data['solutions']
+        max_weights = data['max_weights']
         Tmax = data.get('Tmax', 10)
         current_values = data.get('current_values', [])
 
@@ -174,14 +171,14 @@ def tempera_knapsack() -> Any:
     """Perform simulated annealing for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        max_weights = data['max_weights']
-        weights = data['weights']
         costs = data['costs']
+        weights = data['weights']
         solutions = data['solutions']
-        Tmax = data.get('Tmax', 10)
+        max_weights = data['max_weights']
         fr= data.get('fr', 0.95)
         ti= data.get('ti', 0.01)
         tf = data.get('tf', 0.01)
+        Tmax = data.get('Tmax', 10)
         current_values = data.get('current_values', [])
         
         new_solutions = []
@@ -220,27 +217,35 @@ def all_methods_knapsack():
     data = get_json_data()
     try:
         n = data['n']
-        max_weights = data['max_weights']
-        weights = data['weights']
         costs = data['costs']
-        current_values = data.get('current_values', [])
+        weights = data['weights']
         solutions = data['solutions']
+        max_weights = data['max_weights']
+        current_values = data.get('current_values', [])
         Tmax = data.get('Tmax', 10)
 
+        # Executa o método de escalada para cada solução
         slope_climb_solutions, slope_climb_values = service.slope_climbing_method(
             solutions, current_values, weights, costs, max_weights
         )
         slope_climb_try_solutions, slope_climb_try_values = service.slope_climb_try_again_method(
             solutions, current_values, weights, costs, max_weights, Tmax
         )
-        tempera_solutions, tempera_values = service.tempera(
-            n=n,
-            max_weights=max_weights,
-            weights=weights,
-            costs=costs,
-            solutions=solutions,
-            Tmax=Tmax
-        )
+        
+        # Executa o método tempera para cada solução
+        tempera_solutions = []
+        tempera_values = []
+        for i in range(len(solutions)):
+            tempera_solution, tempera_value = service.tempera(
+                n=n,
+                max_weights=max_weights,
+                weights=weights,
+                costs=costs,
+                solutions=solutions,
+                Tmax=Tmax
+            )
+            tempera_solutions.append(tempera_solution)
+            tempera_values.append(tempera_value)
 
         return jsonify({
             'initial_solutions': solutions,
