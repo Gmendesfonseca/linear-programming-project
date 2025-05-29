@@ -127,12 +127,7 @@ def slope_climb_knapsack() -> Any:
         weights = data['weights']
         costs = data['costs']
         solutions = data['solutions']
-
-        # Calculate current_values for each solution
-        current_values = [
-            service.evaluate_solution(solutions[i], weights[i], costs[i])
-            for i in range(len(solutions))
-        ]
+        current_values = data.get('current_values', [])
 
         solutions, current_values = service.slope_climbing_method(
             solutions, current_values, weights, costs, max_weights
@@ -153,18 +148,12 @@ def slope_climb_knapsack_try_again() -> Any:
     """Perform slope climbing for a multiple-knapsack problem with retry logic."""
     data = get_json_data()
     try:
-        n = data['n']
         max_weights = data['max_weights']
         weights = data['weights']
         costs = data['costs']
         solutions = data['solutions']
         Tmax = data.get('Tmax', 10)
-
-        # Calculate current_values for each solution
-        current_values = [
-            service.evaluate_solution(solutions[i], weights[i], costs[i])
-            for i in range(len(solutions))
-        ]
+        current_values = data.get('current_values', [])
 
         solutions, current_values = service.slope_climb_try_again_method(
             solutions, current_values, weights, costs, max_weights, Tmax
@@ -185,22 +174,39 @@ def tempera_knapsack() -> Any:
     """Perform simulated annealing for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        n = data['n']
         max_weights = data['max_weights']
         weights = data['weights']
         costs = data['costs']
         solutions = data['solutions']
         Tmax = data.get('Tmax', 10)
-
-        atual, va = service.tempera_method(
-            n=n,
-            max_weights=max_weights,
-            weights=weights,
-            costs=costs,
-            solutions=solutions,
-            Tmax=Tmax
-        )
-        return jsonify({'solutions': atual, 'costs': va})
+        fr= data.get('fr', 0.95)
+        ti= data.get('ti', 0.01)
+        tf = data.get('tf', 0.01)
+        current_values = data.get('current_values', [])
+        
+        new_solutions = []
+        new_current_values = []
+        
+        for i in range(len(solutions)):
+            if len(solutions[i]) != len(weights[i]) or len(solutions[i]) != len(costs[i]):
+                logging.error("Solution length does not match weights or costs length.")
+                abort(400, description="Solution length does not match weights or costs length.")
+                
+            new_solution, new_value = service.tempera(
+                cost=costs[i],
+                weight=weights[i],
+                solution=solutions[i],
+                Tmax=Tmax,
+                max_weight=max_weights[i],
+                fr=fr,
+                tf=tf,
+                ti=ti,
+                va=current_values[i]
+            )
+            new_solutions.append(new_solution)
+            new_current_values.append(new_value)
+            
+        return jsonify({'solutions': new_solutions, 'current_values': new_current_values})
     except KeyError as e:
         logging.error(f"Missing key: {e}")
         abort(400, description=f"Missing key: {e}")
@@ -217,16 +223,17 @@ def all_methods_knapsack():
         max_weights = data['max_weights']
         weights = data['weights']
         costs = data['costs']
+        current_values = data.get('current_values', [])
         solutions = data['solutions']
         Tmax = data.get('Tmax', 10)
 
         slope_climb_solutions, slope_climb_values = service.slope_climbing_method(
-            solutions, [], weights, costs, max_weights
+            solutions, current_values, weights, costs, max_weights
         )
         slope_climb_try_solutions, slope_climb_try_values = service.slope_climb_try_again_method(
-            solutions, [], weights, costs, max_weights, Tmax
+            solutions, current_values, weights, costs, max_weights, Tmax
         )
-        tempera_solutions, tempera_values = service.tempera_method(
+        tempera_solutions, tempera_values = service.tempera(
             n=n,
             max_weights=max_weights,
             weights=weights,
