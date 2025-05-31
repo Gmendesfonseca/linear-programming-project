@@ -8,6 +8,7 @@ import {
   generateKnapsackProblem,
   initialBagSolution,
 } from '../../service/requests';
+import { randomSplitInt } from '@/utils/randomSplit';
 
 const BasicMethods = () => {
   const methodOptions = [
@@ -20,11 +21,13 @@ const BasicMethods = () => {
     { value: 'all', label: 'Todos' },
   ];
   const [, setLoading] = useState(false);
-  const [knapsackLength, setKnapsackLength] = useState([3, 2, 6]);
-  const [maxKnapsackWeight, setMaxKnapsackWeight] = useState([10, 15, 20]);
-  const [maxItemsWeight, setMaxItemsWeight] = useState(10);
   const [itemsCost, setItemsCost] = useState([]);
   const [itemsWeight, setItemsWeight] = useState([]);
+  const [maxItemsWeight, setMaxItemsWeight] = useState(10);
+  const [biggestKnapsackLength, setBiggestKnapsackLength] = useState(9);
+  const [biggestKnapsackWeight, setBiggestKnapsackWeight] = useState(45);
+  const [knapsackLength, setKnapsacksLength] = useState<number[]>([]);
+  const [maxKnapsackWeight, setMaxKnapsacksWeight] = useState<number[]>([]);
   const [knapsackProblem, setKnapsackProblem] = useState({
     wights: [],
     costs: [],
@@ -35,6 +38,13 @@ const BasicMethods = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
+    const randomKnapsacksNumber = Math.random() * 10 + 1;
+    setKnapsacksLength(
+      randomSplitInt(biggestKnapsackLength, randomKnapsacksNumber)
+    );
+    setMaxKnapsacksWeight(
+      randomSplitInt(biggestKnapsackWeight, randomKnapsacksNumber)
+    );
     generateKnapsackProblem({
       min_weight: 1,
       max_weight: maxItemsWeight,
@@ -72,9 +82,9 @@ const BasicMethods = () => {
     <MainLayout>
       <form onSubmit={handleSubmit}>
         <ProblemDefinition
-          setMax={setMaxWeight}
+          setMax={setBiggestKnapsackWeight}
           initialOption="FIXED"
-          setProblemLength={setKnapsackLength}
+          setProblemLength={setBiggestKnapsackLength}
           onOptionChange={(option) => console.log(option)}
         />
         <Methods options={methodOptions} />

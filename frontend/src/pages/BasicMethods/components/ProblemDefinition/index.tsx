@@ -10,10 +10,10 @@ interface ProblemDefinitionProps {
 }
 
 export const ProblemDefinition = ({
-  initialOption = 'FIXED',
-  onOptionChange,
   setMax,
+  onOptionChange,
   setProblemLength,
+  initialOption = 'FIXED',
 }: ProblemDefinitionProps) => {
   const [option, setOption] = useState<'FIXED' | 'VARIABLE'>(initialOption);
 
