@@ -11,39 +11,52 @@ import {
 
 const BasicMethods = () => {
   const methodOptions = [
-    { value: 'method1', label: 'Método 1' },
-    { value: 'method2', label: 'Método 2' },
-    { value: 'method3', label: 'Método 3' },
+    { value: 'slope_climbing', label: 'Subida de Encosta' },
+    {
+      value: 'slope_climbing_try_again',
+      label: 'Subida de Encosta c/Tentativa',
+    },
+    { value: 'tempera', label: 'Tempera' },
+    { value: 'all', label: 'Todos' },
   ];
   const [, setLoading] = useState(false);
-  const [problemLength, setProblemLength] = useState(10);
-  const [max, setMax] = useState(100);
-  const [knapsackProblem, setKnapsackProblem] = useState([]);
-  const [initialSolution, setInitialSolution] = useState([]);
-  const [evaluateSolution, setEvaluationSolution] = useState({
-    weight: 0,
-    cost: 0,
+  const [knapsackLength, setKnapsackLength] = useState([3, 2, 6]);
+  const [maxKnapsackWeight, setMaxKnapsackWeight] = useState([10, 15, 20]);
+  const [maxItemsWeight, setMaxItemsWeight] = useState(10);
+  const [itemsCost, setItemsCost] = useState([]);
+  const [itemsWeight, setItemsWeight] = useState([]);
+  const [knapsackProblem, setKnapsackProblem] = useState({
+    wights: [],
+    costs: [],
   });
+  const [initialSolution, setInitialSolution] = useState<number[]>([]);
+  const [evaluateSolution, setEvaluationSolution] = useState(0);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     generateKnapsackProblem({
-      n: problemLength,
-      min: 1,
-      max,
+      min_weight: 1,
+      max_weight: maxItemsWeight,
+      knapsacks_length: knapsackLength,
     }).then((response) => {
-      setKnapsackProblem(response.weight);
+      setKnapsackProblem(response.data);
+      setItemsCost(response.costs);
+      setItemsWeight(response.weights);
       initialBagSolution({
-        n: problemLength,
-        max,
-        weight: response.weight,
+        knapsacks_length: knapsackLength,
+        max_weights: maxKnapsackWeight,
+        weights: response.weights,
       }).then((solution) => {
         setInitialSolution(solution.bag);
         evaluateBagSolution({
-          n: problemLength,
-          solution: solution.bag,
-          max,
+          knapsacks: [
+            {
+              solution: solution.bag,
+              weights: response.weights,
+              costs: response.costs,
+            },
+          ],
         }).then((evaluationResponse) => {
           setEvaluationSolution(evaluationResponse);
           setLoading(false);
@@ -59,9 +72,9 @@ const BasicMethods = () => {
     <MainLayout>
       <form onSubmit={handleSubmit}>
         <ProblemDefinition
-          setProblemLength={setProblemLength}
-          setMax={setMax}
-          initialOption='FIXED'
+          setMax={setMaxWeight}
+          initialOption="FIXED"
+          setProblemLength={setKnapsackLength}
           onOptionChange={(option) => console.log(option)}
         />
         <Methods options={methodOptions} />

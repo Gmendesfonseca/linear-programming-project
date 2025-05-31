@@ -97,13 +97,13 @@ def evaluate_knapsack_solution() -> Any:
     """Evaluate the total cost and weight of solutions for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        bags = data['bags']
+        knapsacks = data['knapsacks']
         current_values = []
-        for bag in bags:
+        for knapsack in knapsacks:
             current_value = service.evaluate_solution(
-                solution=bag['solution'],
-                weights=bag['weights'],
-                costs=bag['costs']
+                solution=knapsack['solution'],
+                weights=knapsack['weights'],
+                costs=knapsack['costs']
             )
             current_values.append(current_value)
         return jsonify({'current_values': current_values})

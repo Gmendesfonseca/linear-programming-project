@@ -6,20 +6,19 @@ export type CalcParams = {
 };
 
 export type GenerateKnapsackProblemParams = {
-  knapsacks_length: number;
+  knapsacks_length: number[];
   min_weight: number;
   max_weight: number;
-  max_weights: number[];
 };
 
 export type InitialBagSolutionParams = {
-  knapsacks_length: number;
+  knapsacks_length: number[];
   weights: number;
   max_weights: number[];
 };
 
 export type EvaluateBagSolutionParams = {
-  bags: {
+  knapsacks: {
     solution: number[];
     weights: number[];
     costs: number[];

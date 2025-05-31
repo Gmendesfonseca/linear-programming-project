@@ -30,48 +30,54 @@ export async function calc({
 }
 
 export async function generateKnapsackProblem({
-  n,
-  min,
-  max,
+  knapsacks_length,
+  min_weight,
+  max_weight,
 }: GenerateKnapsackProblemParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/problem`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n: n, min: min, max: max }),
+    body: JSON.stringify({
+      knapsacks_length: knapsacks_length,
+      min_weight: min_weight,
+      max_weight: max_weight,
+    }),
   });
   const data = await response.json();
   return data;
 }
 
 export async function initialBagSolution({
-  n,
-  max,
-  weight,
+  knapsacks_length,
+  weights,
+  max_weights,
 }: InitialBagSolutionParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/initial_solution`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n: n, max: max, weight: weight }),
+    body: JSON.stringify({
+      knapsacks_length: knapsacks_length,
+      weights: weights,
+      max_weights: max_weights,
+    }),
   });
   const data = await response.json();
   return data;
 }
 
 export async function evaluateBagSolution({
-  n,
-  solution,
-  max,
+  knapsacks,
 }: EvaluateBagSolutionParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/evaluate_solution`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n, solution, max }),
+    body: JSON.stringify({ knapsacks }),
   });
   const data = await response.json();
   return data;
