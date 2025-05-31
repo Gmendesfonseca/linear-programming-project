@@ -44,13 +44,12 @@ def generate_knapsack_problem(n, min_weight, max_weight):
     :param max_weight: Peso máximo de cada item.
     :return: Uma lista com listas de pesos e uma lista com listas de custos dos itens para cada mochila.
     """
-    weights = []
     costs = []
+    weights = []
 
     for i in range(len(n)):
         knapsack_weights = []
         knapsack_costs = []
-        total_weight = 0
 
         for _ in range(n[i]):
             knapsack_weights.append(random.randint(min_weight, max_weight))

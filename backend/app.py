@@ -57,13 +57,12 @@ def generate_knapsack_problem() -> Any:
         n = data['knapsacks_length']
         min_weight = data['minimum_weight']
         max_weight = data['maximum_weight']
-        max_weights = data['max_weights']
 
-        weights, costs = service.generate_knapsack_problem(n, min_weight, max_weight, max_weights)
+        weights, costs = service.generate_knapsack_problem(n, min_weight, max_weight)
         combined_problem = {
             'knapsacks_length': n,
             'min_weight': min_weight,
-            'max_weights': max_weights,
+            'max_weight': max_weight,
             'weights': weights,
             'costs': costs,
         }
