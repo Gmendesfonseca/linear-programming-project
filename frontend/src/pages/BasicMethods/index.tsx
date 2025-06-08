@@ -7,75 +7,107 @@ import {
   evaluateBagSolution,
   generateKnapsackProblem,
   initialBagSolution,
-} from '../../service/requests';
+} from '@/service/requests';
+import { KnapsackProblem } from '@/service/types';
 import { randomSplitInt } from '@/utils/randomSplit';
+import { Option } from '@/pages/BasicMethods/components/Methods';
+
+export enum Method {
+  SLOPE_CLIMBING = 'slope_climbing',
+  SLOPE_CLIMBING_TRY_AGAIN = 'slope_climbing_try_again',
+  TEMPERA = 'tempera',
+  ALL = 'all',
+}
+
+export const MethodsLabels: Record<Method, string> = {
+  [Method.SLOPE_CLIMBING]: 'Subida de Encosta',
+  [Method.SLOPE_CLIMBING_TRY_AGAIN]: 'Subida de Encosta c/Tentativa',
+  [Method.TEMPERA]: 'Tempera',
+  [Method.ALL]: 'Todos',
+};
+
+const methodOptions: Option[] = [
+  { value: Method.SLOPE_CLIMBING, label: MethodsLabels[Method.SLOPE_CLIMBING] },
+  {
+    value: Method.SLOPE_CLIMBING_TRY_AGAIN,
+    label: MethodsLabels[Method.SLOPE_CLIMBING_TRY_AGAIN],
+  },
+  { value: Method.TEMPERA, label: MethodsLabels[Method.TEMPERA] },
+  { value: Method.ALL, label: MethodsLabels[Method.ALL] },
+];
+
+export interface MethodsProps {
+  costs: number[][];
+  weights: number[][];
+  solutions: number[][];
+  maximumWeights: number[];
+  currentValues: number[];
+  setNewValue: React.Dispatch<React.SetStateAction<number[][]>>;
+  setNewSolution: React.Dispatch<React.SetStateAction<number[][]>>;
+}
 
 const BasicMethods = () => {
-  const methodOptions = [
-    { value: 'slope_climbing', label: 'Subida de Encosta' },
-    {
-      value: 'slope_climbing_try_again',
-      label: 'Subida de Encosta c/Tentativa',
-    },
-    { value: 'tempera', label: 'Tempera' },
-    { value: 'all', label: 'Todos' },
-  ];
-  const [, setLoading] = useState(false);
-  const [itemsCost, setItemsCost] = useState([]);
-  const [itemsWeight, setItemsWeight] = useState([]);
-  const [maxItemsWeight, setMaxItemsWeight] = useState(10);
-  const [biggestKnapsackLength, setBiggestKnapsackLength] = useState(9);
+  const [maxItemsWeight] = useState(10);
+  const [biggestKnapsackLength, setBiggestKnapsackLength] = useState(20);
   const [biggestKnapsackWeight, setBiggestKnapsackWeight] = useState(45);
-  const [knapsackLength, setKnapsacksLength] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [newValue, setNewValue] = useState<number[][]>([]);
+  const [newSolution, setNewSolution] = useState<number[][]>([]);
+  const [currentValues, setCurrentValues] = useState<number[]>([]);
+  const [method, setMethod] = useState<Method | 'default'>('default');
+  const [initialSolution, setInitialSolution] = useState<number[][]>([]);
   const [maxKnapsackWeight, setMaxKnapsacksWeight] = useState<number[]>([]);
-  const [knapsackProblem, setKnapsackProblem] = useState({
-    wights: [],
+  const [knapsackProblem, setKnapsackProblem] = useState<KnapsackProblem>({
+    weights: [],
     costs: [],
   });
-  const [initialSolution, setInitialSolution] = useState<number[]>([]);
-  const [evaluateSolution, setEvaluationSolution] = useState(0);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const randomKnapsacksNumber = Math.random() * 10 + 1;
-    setKnapsacksLength(
-      randomSplitInt(biggestKnapsackLength, randomKnapsacksNumber)
+
+    const randomKnapsacksNumber = Math.floor(Math.random() * 10) + 1;
+    const knapsacksLengths = randomSplitInt(
+      biggestKnapsackLength,
+      randomKnapsacksNumber
     );
-    setMaxKnapsacksWeight(
-      randomSplitInt(biggestKnapsackWeight, randomKnapsacksNumber)
+    const maxKnapsackWeights = randomSplitInt(
+      biggestKnapsackWeight,
+      randomKnapsacksNumber
     );
-    generateKnapsackProblem({
-      min_weight: 1,
-      max_weight: maxItemsWeight,
-      knapsacks_length: knapsackLength,
-    }).then((response) => {
-      setKnapsackProblem(response.data);
-      setItemsCost(response.costs);
-      setItemsWeight(response.weights);
-      initialBagSolution({
-        knapsacks_length: knapsackLength,
-        max_weights: maxKnapsackWeight,
-        weights: response.weights,
-      }).then((solution) => {
-        setInitialSolution(solution.bag);
-        evaluateBagSolution({
-          knapsacks: [
-            {
-              solution: solution.bag,
-              weights: response.weights,
-              costs: response.costs,
-            },
-          ],
-        }).then((evaluationResponse) => {
-          setEvaluationSolution(evaluationResponse);
-          setLoading(false);
-        });
+
+    try {
+      const { problem } = await generateKnapsackProblem({
+        minimum_weight: 1,
+        maximum_weight: maxItemsWeight,
+        knapsacks_length: knapsacksLengths,
       });
-    });
-    console.log('knapsackProblem', knapsackProblem);
-    console.log('initialSolution', initialSolution);
-    console.log('evaluateSolution', evaluateSolution);
+      setKnapsackProblem(problem);
+
+      const { solutions } = await initialBagSolution({
+        weights: problem.weights,
+        knapsacks_length: knapsacksLengths,
+        maximum_weights: maxKnapsackWeights,
+      });
+      setInitialSolution(solutions);
+
+      const knapsacks = solutions.map((solution: number[], index: number) => ({
+        solution,
+        weights: problem.weights[index],
+        costs: problem.costs[index],
+      }));
+
+      const { current_values } = await evaluateBagSolution({
+        knapsacks,
+      });
+      setCurrentValues(current_values);
+
+      setMaxKnapsacksWeight(maxKnapsackWeights);
+    } catch (error) {
+      console.error('Error generating knapsack problem:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -87,7 +119,17 @@ const BasicMethods = () => {
           setProblemLength={setBiggestKnapsackLength}
           onOptionChange={(option) => console.log(option)}
         />
-        <Methods options={methodOptions} />
+        <Methods
+          method={method}
+          setMethod={setMethod}
+          options={methodOptions}
+          setNewValue={setNewValue}
+          solutions={initialSolution}
+          currentValues={currentValues}
+          setNewSolution={setNewSolution}
+          maximumWeights={maxKnapsackWeight}
+          {...knapsackProblem}
+        />
         <div
           style={{
             display: 'flex',
@@ -111,14 +153,31 @@ const BasicMethods = () => {
           </button>
         </div>
       </form>
-      <DataView
-        data={{
-          knapsackProblem,
-          initialSolution,
-          weight: evaluateSolution.weight,
-          cost: evaluateSolution.cost,
-        }}
-      />
+      {loading && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '16px',
+            fontSize: '18px',
+            color: '#3d3d3d',
+          }}
+        >
+          <p>Carregando...</p>
+        </div>
+      )}
+      {!loading && (
+        <DataView
+          data={{
+            method,
+            newValue,
+            newSolution,
+            currentValues,
+            initialSolution,
+            ...knapsackProblem,
+          }}
+        />
+      )}
     </MainLayout>
   );
 };

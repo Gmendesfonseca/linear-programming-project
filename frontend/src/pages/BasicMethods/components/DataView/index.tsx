@@ -1,11 +1,15 @@
 import React from 'react';
+import { MethodsLabels, Method } from '@/pages/BasicMethods';
 
 interface DataViewProps {
   data: {
-    knapsackProblem: number[];
-    initialSolution: number[];
-    weight: number;
-    cost: number;
+    method: Method | 'default';
+    costs: number[][];
+    weights: number[][];
+    newValue?: number[][];
+    currentValues: number[];
+    newSolution?: number[][];
+    initialSolution: number[][];
   };
 }
 
@@ -32,22 +36,14 @@ export const DataView: React.FC<DataViewProps> = ({ data }) => {
         <tbody>
           <tr>
             <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              Problema da Mochila
-            </td>
-            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              {data.knapsackProblem
-                ? JSON.stringify(data.knapsackProblem)
-                : '--'}
-            </td>
-          </tr>
-          <tr>
-            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
               Solução Inicial
             </td>
             <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              [
               {data.initialSolution
-                ? JSON.stringify(data.initialSolution)
+                ? JSON.stringify(data.initialSolution.join(', '))
                 : '--'}
+              ]
             </td>
           </tr>
           <tr>
@@ -55,7 +51,11 @@ export const DataView: React.FC<DataViewProps> = ({ data }) => {
               Peso Avaliado
             </td>
             <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              {data.weight || '--'}
+              {data.weights
+                .map(
+                  (weight) => `[${weight.map((w) => w.toFixed(2)).join(', ')}]`
+                )
+                .join(' | ') || '--'}
             </td>
           </tr>
           <tr>
@@ -63,7 +63,44 @@ export const DataView: React.FC<DataViewProps> = ({ data }) => {
               Custo Avaliado
             </td>
             <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              {data.cost || '--'}
+              {data.costs
+                .map((cost) => `[${cost.map((c) => c.toFixed(2)).join(', ')}]`)
+                .join(' | ') || '--'}
+            </td>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              Valor da Solução
+            </td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              {data.currentValues.map((value) => value.toFixed(2)).join(', ') ||
+                '--'}
+            </td>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              Método Selecionado
+            </td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              {data.method !== 'default' && MethodsLabels[data.method as Method]
+                ? MethodsLabels[data.method as Method]
+                : '--'}
+            </td>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              Nova Solução
+            </td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              {data.newSolution || '--'}
+            </td>
+          </tr>
+          <tr>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              Novo Valor da Solução
+            </td>
+            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              {data.newValue || '--'}
             </td>
           </tr>
         </tbody>

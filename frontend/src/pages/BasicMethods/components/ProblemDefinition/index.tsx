@@ -33,14 +33,14 @@ export const ProblemDefinition = ({
       <div className="problem-definition-options">
         <div>
           <OptionItem
-            title={'Configuração Fixa'}
+            title={'Fixa'}
             handleClick={handleFixedConfig}
             checked={option === 'FIXED'}
           />
         </div>
         <div>
           <OptionItem
-            title={'Configuração Variável'}
+            title={'Variável'}
             handleClick={handleVariableConfig}
             checked={option === 'VARIABLE'}
           />

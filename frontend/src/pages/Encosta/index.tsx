@@ -1,99 +1,80 @@
-import { MainLayout } from '@/components/MainLayout';
-import { sendSlopeClimbingData } from '@/service/requests';
-import { useState } from 'react';
+import { SlopeClimbingParams, SlopeClimbingTryParams } from '@/service/types';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import {
+  sendSlopeClimbingData,
+  sendSlopeClimbingTryData,
+} from '@/service/requests';
+import { MethodsProps, Method } from '@/pages/BasicMethods';
 
 type InputsType = {
-  solutions: number[];
-  weights: number[];
-  costs: number[];
-  max_weights: number[];
-  current_values: number[];
+  Tmax: number;
 };
 
-export default function Encosta() {
-  const [bags, setBags] = useState<number[]>([]);
+interface EncostaProps extends MethodsProps {
+  method: Method;
+}
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<InputsType>();
+export default function Encosta({
+  method,
+  setNewValue,
+  setNewSolution,
+  ...params
+}: EncostaProps) {
+  const { register, handleSubmit } = useForm<InputsType>({
+    defaultValues: {
+      Tmax: 10, // Valor padrão para Tmax
+    },
+  });
 
-  function generateNewBag() {
-    setBags((prev) => [...prev, prev.length + 1]);
-  }
-
-  function removeBag() {
-    setBags((prev) => prev.slice(0, -1));
-  }
-
-  const onSubmit: SubmitHandler<InputsType> = (data) => {
-    console.log(data);
-    sendSlopeClimbingData(data);
+  const onSubmit: SubmitHandler<InputsType> = ({ Tmax }: InputsType) => {
+    if (method === Method.SLOPE_CLIMBING) {
+      const payload: SlopeClimbingParams = {
+        ...params,
+        solution: params.solutions,
+        maximum_weights: params.maximumWeights,
+        current_values: params.currentValues,
+      };
+      sendSlopeClimbingData(payload).then((response) => {
+        setNewValue(response.current_values);
+        setNewSolution(response.solutions);
+      });
+    } else {
+      const payload: SlopeClimbingTryParams = {
+        ...params,
+        Tmax,
+        maximum_weights: params.maximumWeights,
+        current_values: params.currentValues,
+        solution: params.solutions,
+      };
+      sendSlopeClimbingTryData(payload).then((response) => {
+        setNewValue(response.current_values);
+        setNewSolution(response.solutions);
+      });
+    }
   };
 
-  return (
-    <MainLayout>
-      <div className="h-screen flex flex-col content-between space-between">
-        <h1>Encosta</h1>
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-          {bags.map((bag, index) => (
-            <div key={index}>
-              <h2>Mochila {bag}</h2>
-              <label htmlFor="max_weight">Max Weigth</label>
-              <input
-                className="border-2 p-16 h-8 w-16 text-center"
-                type="text"
-                {...register('max_weights', { required: true })}
-              />
-              {errors.max_weights && <span>This field is required</span>}
-              <label htmlFor="weights">Weights</label>
-              <input
-                className="border-2 p-16 h-8 w-16 text-center"
-                type="text"
-                {...register('weights', { required: true })}
-              />
-              {errors.weights && <span>This field is required</span>}
+  if (method === Method.SLOPE_CLIMBING) return null;
 
-              <label htmlFor="costs">Costs</label>
-              <input
-                className="border-2 p-16 h-8 w-16 text-center"
-                type="text"
-                {...register('costs', { required: true })}
-              />
-              {errors.costs && <span>This field is required</span>}
-              <button
-                type="button"
-                className="bg-red-500 text-white p-2 rounded"
-                onClick={removeBag}
-              >
-                Remover
-              </button>
-            </div>
-          ))}
-          <div>
-            <button
-              type="button"
-              className="bg-green-500 text-white p-2 rounded"
-              onClick={generateNewBag}
-            >
-              Adicionar mochila
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
-            >
-              Avaliar
-            </button>
-          </div>
-        </form>
-        <div>
-          <p>
-            <strong>Resultado: {}</strong>
-          </p>
-        </div>
-      </div>
-    </MainLayout>
+  return (
+    <div
+      className="flex flex-col items-center bg-gray-100 w-full h-fit"
+      style={{ padding: '16px 0' }}
+    >
+      <h1>Encosta</h1>
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+        <label className="text-lg">Tmax:</label>
+        <input
+          type="number"
+          {...register('Tmax', { required: true })}
+          className="border border-gray-300 rounded px-2 py-1 w-full"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Enviar
+        </button>
+      </form>
+    </div>
   );
 }

@@ -75,12 +75,12 @@ def generate_initial_solution(n, max_weights, weights):
         knapsack = [0] * n[k]  # Inicializa a mochila com 0s
         total_weight = 0
 
-        # Adiciona itens aleatórios à mochila até atingir o peso máximo
-        while total_weight <= max_weights[k]:
-            item = random.randint(0, n[k] - 1)  # Escolhe um item aleatório
-            if knapsack[item] == 0:  # Verifica se o item já está na mochila
-                knapsack[item] = 1  # Se não estiver, adiciona o item
-                total_weight += weights[k][item]  # Atualiza o peso total
+        indices = list(range(n[k]))
+        random.shuffle(indices)
+        for item in indices:
+            if total_weight + weights[k][item] <= max_weights[k]:
+                knapsack[item] = 1
+                total_weight += weights[k][item]
         knapsack[item] = 0
         solutions.append(knapsack)
 

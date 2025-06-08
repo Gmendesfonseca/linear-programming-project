@@ -7,7 +7,7 @@ from flask_cors import CORS # type: ignore
 app = Flask(__name__)
 CORS(app)
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/', methods=['GET'])
 def index() -> str:
@@ -23,7 +23,6 @@ def get_json_data() -> Dict[str, Any]:
 
 @app.route('/calc/simplex', methods=['POST'])
 def simplex() -> Any:
-    """Solve a linear programming problem using the simplex method."""
     data = get_json_data()
     try:
         l_in = data['coefficient_inequality']
@@ -51,7 +50,6 @@ def simplex() -> Any:
 
 @app.route('/calc/knapsack/problem', methods=['POST'])
 def generate_knapsack_problem() -> Any:
-    """Generate a multiple-knapsack problem."""
     data = get_json_data()
     try:
         n = data['knapsacks_length']
@@ -60,11 +58,11 @@ def generate_knapsack_problem() -> Any:
 
         weights, costs = service.generate_knapsack_problem(n, min_weight, max_weight)
         combined_problem = {
-            'knapsacks_length': n,
-            'min_weight': min_weight,
-            'max_weight': max_weight,
-            'weights': weights,
             'costs': costs,
+            'weights': weights,
+            'knapsacks_length': n,
+            'minimum_weight': min_weight,
+            'maximum_weight': max_weight,
         }
         return jsonify({'problem': combined_problem})
     except KeyError as e:
@@ -76,12 +74,11 @@ def generate_knapsack_problem() -> Any:
 
 @app.route('/calc/knapsack/initial_solution', methods=['POST'])
 def initial_knapsack_solution() -> Any:
-    """Generate an initial solution for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        n = data['knapsacks_length']
         weights = data['weights']
-        max_weights = data['max_weights']
+        n = data['knapsacks_length']
+        max_weights = data['maximum_weights']
 
         solutions = service.generate_initial_solution(n, max_weights, weights)
         return jsonify({'solutions': solutions})
@@ -94,16 +91,15 @@ def initial_knapsack_solution() -> Any:
 
 @app.route('/calc/knapsack/evaluate_solution', methods=['POST'])
 def evaluate_knapsack_solution() -> Any:
-    """Evaluate the total cost and weight of solutions for a multiple-knapsack problem."""
     data = get_json_data()
     try:
         knapsacks = data['knapsacks']
         current_values = []
         for knapsack in knapsacks:
             current_value = service.evaluate_solution(
-                solution=knapsack['solution'],
+                costs=knapsack['costs'],
                 weights=knapsack['weights'],
-                costs=knapsack['costs']
+                solution=knapsack['solution'],
             )
             current_values.append(current_value)
         return jsonify({'current_values': current_values})
@@ -116,13 +112,12 @@ def evaluate_knapsack_solution() -> Any:
 
 @app.route('/calc/knapsack/slope_climb', methods=['POST'])
 def slope_climb_knapsack() -> Any:
-    """Perform slope climbing for a multiple-knapsack problem."""
     data = get_json_data()
     try:
-        max_weights = data['max_weights']
-        weights = data['weights']
         costs = data['costs']
+        weights = data['weights']
         solutions = data['solutions']
+        max_weights = data['maximum_weights']
         current_values = data.get('current_values', [])
 
         solutions, current_values = service.slope_climbing_method(
@@ -141,13 +136,12 @@ def slope_climb_knapsack() -> Any:
 
 @app.route('/calc/knapsack/slope_climb_try_again', methods=['POST'])
 def slope_climb_knapsack_try_again() -> Any:
-    """Perform slope climbing for a multiple-knapsack problem with retry logic."""
     data = get_json_data()
     try:
         costs = data['costs']
         weights = data['weights']
         solutions = data['solutions']
-        max_weights = data['max_weights']
+        max_weights = data['maximum_weights']
         Tmax = data.get('Tmax', 10)
         current_values = data.get('current_values', [])
 
@@ -167,13 +161,12 @@ def slope_climb_knapsack_try_again() -> Any:
 
 @app.route('/calc/knapsack/tempera', methods=['POST'])
 def tempera_knapsack() -> Any:
-    """Perform simulated annealing for a multiple-knapsack problem."""
     data = get_json_data()
     try:
         costs = data['costs']
         weights = data['weights']
         solutions = data['solutions']
-        max_weights = data['max_weights']
+        max_weights = data['maximum_weights']
         fr= data.get('reducer_factor', 0.95)
         ti= data.get('initial_temperature', 0.01)
         tf = data.get('final_temperature', 0.01)
@@ -212,14 +205,13 @@ def tempera_knapsack() -> Any:
 
 @app.route('/calc/knapsack/all', methods=['POST'])
 def all_methods_knapsack():
-    """Run all knapsack methods and return results."""
     data = get_json_data()
     try:
         n = data['n']
         costs = data['costs']
         weights = data['weights']
         solutions = data['solutions']
-        max_weights = data['max_weights']
+        max_weights = data['maximum_weights']
         current_values = data.get('current_values', [])
         Tmax = data.get('Tmax', 10)
 

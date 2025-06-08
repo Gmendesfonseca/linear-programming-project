@@ -10,9 +10,9 @@ export const Header = () => {
   //   '/problem-description': 'Descrição do Problema',
   // };
   return (
-    <header className='header'>
+    <header className="header">
       {/* <h2>{title[path]}</h2> */}
-      <div className='paths'>
+      <div className="paths">
         {path !== '/home' && (
           <Link to={'/home'} replace>
             Home
@@ -28,16 +28,16 @@ export const Header = () => {
             Algoritmos Genéticos
           </Link>
         )}
-        {path !== '/problem-description' && (
+        {/* {path !== '/problem-description' && (
           <Link to={'/problem-description'} replace>
             Descrição do Problema
           </Link>
-        )}
-        {path !== '/encosta' && (
+        )} */}
+        {/* {path !== '/encosta' && (
           <Link to={'/encosta'} replace>
             Encosta
           </Link>
-        )}
+        )} */}
       </div>
     </header>
   );

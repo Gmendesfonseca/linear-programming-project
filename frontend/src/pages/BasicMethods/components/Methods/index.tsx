@@ -1,34 +1,48 @@
-import { useState } from 'react';
 import './styles.css';
+import Encosta from '@/pages/Encosta';
+import Tempera from '@/pages/Tempera';
+import { MethodsProps, Method } from '@/pages/BasicMethods';
 
-interface MethodsProps {
-  options: { value: string; label: string }[];
+export interface Option {
+  value: string;
+  label: string;
 }
 
-export const Methods = ({ options }: MethodsProps) => {
-  const [selectedMethod, setSelectedMethod] = useState<string>('');
+interface MethodsComponentProps extends MethodsProps {
+  options: Option[];
+  method: Method | 'default';
+  setMethod: React.Dispatch<React.SetStateAction<Method | 'default'>>;
+}
 
+export const Methods = ({
+  options,
+  method,
+  setMethod,
+  ...rest
+}: MethodsComponentProps) => {
   const handleMethodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedMethod(event.target.value);
+    setMethod(event.target.value as Method);
   };
 
   return (
     <div className="methods">
       <h1>Métodos Básicos</h1>
-      <select onChange={handleMethodChange} disabled>
-        <option value="">Selecione um método</option>
+      <select onChange={handleMethodChange} value={method}>
+        <option value={'default'}>Selecione um método</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
-      {selectedMethod && (
-        <div className="method-details">
-          <h2>Detalhes do Método</h2>
-          <p>Você selecionou: {selectedMethod}</p>
-        </div>
+      {method === 'slope_climbing' && (
+        <Encosta method={Method.SLOPE_CLIMBING} {...rest} />
       )}
+      {method === 'slope_climbing_try_again' && (
+        <Encosta method={Method.SLOPE_CLIMBING_TRY_AGAIN} {...rest} />
+      )}
+      {method === 'tempera' && <Tempera {...rest} />}
+      {method === 'all' && <div>Fiquei devendo!</div>}
     </div>
   );
 };

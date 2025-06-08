@@ -3,6 +3,9 @@ import {
   GenerateKnapsackProblemParams,
   InitialBagSolutionParams,
   EvaluateBagSolutionParams,
+  SlopeClimbingTryParams,
+  SlopeClimbingParams,
+  TemperatureParams,
 } from './types';
 
 const BASE_URL = 'http://localhost:5000';
@@ -31,8 +34,8 @@ export async function calc({
 
 export async function generateKnapsackProblem({
   knapsacks_length,
-  min_weight,
-  max_weight,
+  minimum_weight,
+  maximum_weight,
 }: GenerateKnapsackProblemParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/problem`, {
     method: 'POST',
@@ -40,9 +43,9 @@ export async function generateKnapsackProblem({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      knapsacks_length: knapsacks_length,
-      min_weight: min_weight,
-      max_weight: max_weight,
+      knapsacks_length,
+      minimum_weight,
+      maximum_weight,
     }),
   });
   const data = await response.json();
@@ -50,9 +53,9 @@ export async function generateKnapsackProblem({
 }
 
 export async function initialBagSolution({
-  knapsacks_length,
   weights,
-  max_weights,
+  maximum_weights,
+  knapsacks_length,
 }: InitialBagSolutionParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/initial_solution`, {
     method: 'POST',
@@ -60,9 +63,9 @@ export async function initialBagSolution({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      knapsacks_length: knapsacks_length,
-      weights: weights,
-      max_weights: max_weights,
+      weights,
+      knapsacks_length,
+      maximum_weights,
     }),
   });
   const data = await response.json();
@@ -84,29 +87,81 @@ export async function evaluateBagSolution({
 }
 
 export async function sendSlopeClimbingData({
-  max_weights,
-  weights,
   costs,
-  solutions,
+  weights,
+  solution,
+  maximum_weights,
   current_values,
-}: {
-  max_weights: number[];
-  weights: number[];
-  costs: number[];
-  solutions: number[];
-  current_values: number[];
-}) {
+}: SlopeClimbingParams) {
   const response = await fetch(`${BASE_URL}/calc/knapsack/slope_climb`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      max_weights,
+      maximum_weights,
       weights,
       costs,
-      solutions,
+      solution,
       current_values,
+    }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function sendSlopeClimbingTryData({
+  Tmax,
+  costs,
+  weights,
+  solution,
+  maximum_weights,
+  current_values,
+}: SlopeClimbingTryParams) {
+  const response = await fetch(`${BASE_URL}/calc/knapsack/slope_climb`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      maximum_weights,
+      weights,
+      costs,
+      solution,
+      current_values,
+      Tmax,
+    }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function sendTemperatureData({
+  Tmax,
+  costs,
+  weights,
+  solution,
+  current_values,
+  reducer_factor,
+  maximum_weights,
+  final_temperature,
+  initial_temperature,
+}: TemperatureParams) {
+  const response = await fetch(`${BASE_URL}/calc/knapsack/tempera`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      costs,
+      weights,
+      solution,
+      maximum_weights,
+      current_values,
+      reducer_factor,
+      initial_temperature,
+      final_temperature,
+      Tmax,
     }),
   });
   const data = await response.json();
