@@ -11,7 +11,7 @@ export type KnapsackProblem = {
 };
 
 export type Knapsacks = {
-  solution: number[][];
+  solutions: number[][];
 } & KnapsackProblem;
 
 export type GenerateKnapsackProblemParams = {

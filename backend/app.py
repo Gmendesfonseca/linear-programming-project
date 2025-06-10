@@ -143,10 +143,10 @@ def slope_climb_knapsack_try_again() -> Any:
         solutions = data['solutions']
         max_weights = data['maximum_weights']
         Tmax = data.get('Tmax', 10)
-        current_values = data.get('current_values', [])
+        current_values = data['current_values']
 
         solutions, current_values = service.slope_climb_try_again_method(
-            solutions, current_values, weights, costs, max_weights, Tmax
+            solutions=solutions, current_values=current_values, weights=weights, costs=costs, max_weights=max_weights, Tmax=Tmax
         )
         return jsonify({
             'solutions': solutions,
@@ -182,8 +182,8 @@ def tempera_knapsack() -> Any:
                 abort(400, description="Solution length does not match weights or costs length.")
                 
             new_solution, new_value = service.tempera(
-                cost=costs[i],
-                weight=weights[i],
+                costs=costs[i],
+                weights=weights[i],
                 solution=solutions[i],
                 Tmax=Tmax,
                 max_weight=max_weights[i],

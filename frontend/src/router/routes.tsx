@@ -2,7 +2,7 @@ import { Navigate, RouteObject } from 'react-router-dom';
 import Home from '@/pages/Home';
 import BasicMethods from '@/pages/BasicMethods';
 import GeneticAlgorithms from '@/pages/GeneticAlgorithms';
-import Encosta from '@/pages/Encosta';
+// import Encosta from '@/pages/Encosta';
 
 export type RouteType = {
   path: string;
@@ -16,11 +16,11 @@ export function createRoutes() {
   const routes: RouteType[] = [
     {
       path: '/*',
-      element: <Navigate to={'/home'} replace />,
+      element: <Navigate to={'/basic-methods'} replace />,
     },
     {
       path: '/',
-      element: <Navigate to={'/home'} replace />,
+      element: <Navigate to={'/basic-methods'} replace />,
     },
     {
       path: '/home',
@@ -34,10 +34,10 @@ export function createRoutes() {
       path: '/genetic-algorithms',
       element: <GeneticAlgorithms />,
     },
-    {
-      path: '/encosta',
-      element: <Encosta />,
-    },
+    // {
+    //   path: '/encosta',
+    //   element: <Encosta />,
+    // },
   ];
 
   return routes;
