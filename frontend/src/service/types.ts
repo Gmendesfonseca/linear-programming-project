@@ -1,3 +1,5 @@
+import { ResponseData } from '@/interfaces';
+
 export type CalcParams = {
   bounds: number[][];
   objective: number[];
@@ -43,4 +45,14 @@ export type TemperatureParams = {
   reducer_factor: number;
   initial_temperature: number;
   final_temperature: number;
-} & SlopeClimbingTryParams;
+} & SlopeClimbingParams;
+
+export type AllMethodsParams = {
+  Tmax: number;
+} & TemperatureParams;
+
+export type AllResponseData = {
+  slope_climbing: ResponseData;
+  slope_climbing_try: ResponseData;
+  temperature: ResponseData;
+};

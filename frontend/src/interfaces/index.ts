@@ -1,3 +1,5 @@
+import { Method } from '@/pages/BasicMethods/helpers';
+
 export interface MethodsProps {
   costs: number[][];
   weights: number[][];
@@ -11,4 +13,5 @@ export interface MethodsProps {
 export interface ResponseData {
   current_values: number[];
   solutions: number[][];
+  method?: Method;
 }

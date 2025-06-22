@@ -76,7 +76,7 @@ export const BasicMethodsView: React.FC<BasicMethodsView> = ({
           </button>
         </div>
       </form>
-      {!loading && <DataView allData={allData} />}
+      <DataView allData={allData} />
     </MainLayout>
   );
 };

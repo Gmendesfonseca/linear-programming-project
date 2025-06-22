@@ -6,6 +6,8 @@ import {
   SlopeClimbingTryParams,
   SlopeClimbingParams,
   TemperatureParams,
+  AllResponseData,
+  AllMethodsParams,
 } from './types';
 
 const BASE_URL = 'http://localhost:5000';
@@ -140,7 +142,6 @@ export async function sendSlopeClimbingTryData({
 }
 
 export async function sendTemperatureData({
-  Tmax,
   costs,
   weights,
   solutions,
@@ -156,7 +157,6 @@ export async function sendTemperatureData({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      Tmax,
       costs,
       weights,
       solutions,
@@ -166,6 +166,18 @@ export async function sendTemperatureData({
       initial_temperature,
       final_temperature,
     }),
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function sendAllMethodsData(
+  payload: AllMethodsParams,
+): Promise<AllResponseData> {
+  const response = await fetch(`${BASE_URL}/calc/knapsack/all`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   });
   const data = await response.json();
   return data;

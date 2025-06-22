@@ -1,5 +1,17 @@
 import { FormInputs } from '@/types';
 import { Option } from './components/Methods';
+import {
+  sendAllMethodsData,
+  sendSlopeClimbingData,
+  sendSlopeClimbingTryData,
+  sendTemperatureData,
+} from '@/service/requests';
+import {
+  AllMethodsParams,
+  SlopeClimbingParams,
+  SlopeClimbingTryParams,
+  TemperatureParams,
+} from '@/service/types';
 
 export const Method = {
   SLOPE_CLIMBING: 'slope_climbing',
@@ -34,3 +46,27 @@ export const defaultFormValues: Partial<FormInputs> = {
   final_temperature: 0.1,
   method: 'default',
 };
+
+export async function handleTemperatureMethod(payload: TemperatureParams) {
+  return [await sendTemperatureData(payload)];
+}
+
+export async function handleSlopeClimbingTryMethod(
+  payload: SlopeClimbingTryParams,
+) {
+  return [await sendSlopeClimbingTryData(payload)];
+}
+
+export async function handleSlopeClimbingMethod(payload: SlopeClimbingParams) {
+  return [await sendSlopeClimbingData(payload)];
+}
+
+export async function handleAllMethods(payload: AllMethodsParams) {
+  const { slope_climbing, slope_climbing_try, temperature } =
+    await sendAllMethodsData(payload);
+  return [
+    { ...slope_climbing, method: Method.SLOPE_CLIMBING },
+    { ...slope_climbing_try, method: Method.SLOPE_CLIMBING_TRY_AGAIN },
+    { ...temperature, method: Method.TEMPERA },
+  ];
+}
