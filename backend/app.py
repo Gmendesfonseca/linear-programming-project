@@ -120,7 +120,7 @@ def slope_climb_knapsack() -> Any:
         max_weights = data['maximum_weights']
         current_values = data.get('current_values', [])
 
-        solutions, current_values = service.slope_climbing_method(
+        solutions, current_values = service.slope_climbing(
             solutions, current_values, weights, costs, max_weights
         )
         return jsonify({
@@ -145,7 +145,7 @@ def slope_climb_knapsack_try_again() -> Any:
         Tmax = data.get('Tmax', 10)
         current_values = data['current_values']
 
-        solutions, current_values = service.slope_climb_try_again_method(
+        solutions, current_values = service.slope_climb_try_again(
             solutions=solutions, current_values=current_values, weights=weights, costs=costs, max_weights=max_weights, Tmax=Tmax
         )
         return jsonify({
@@ -170,7 +170,6 @@ def tempera_knapsack() -> Any:
         fr= data.get('reducer_factor', 0.95)
         ti= data.get('initial_temperature', 0.01)
         tf = data.get('final_temperature', 0.01)
-        Tmax = data.get('Tmax', 10)
         current_values = data.get('current_values', [])
         
         new_solutions = []
@@ -185,7 +184,6 @@ def tempera_knapsack() -> Any:
                 costs=costs[i],
                 weights=weights[i],
                 solution=solutions[i],
-                Tmax=Tmax,
                 max_weight=max_weights[i],
                 fr=fr,
                 tf=tf,
@@ -207,19 +205,21 @@ def tempera_knapsack() -> Any:
 def all_methods_knapsack():
     data = get_json_data()
     try:
-        n = data['n']
         costs = data['costs']
         weights = data['weights']
         solutions = data['solutions']
         max_weights = data['maximum_weights']
         current_values = data.get('current_values', [])
+        fr= data.get('reducer_factor', 0.95)
+        ti= data.get('initial_temperature', 0.01)
+        tf = data.get('final_temperature', 0.01)
         Tmax = data.get('Tmax', 10)
 
         # Executa o método de escalada para cada solução
-        slope_climb_solutions, slope_climb_values = service.slope_climbing_method(
+        slope_climb_solutions, slope_climb_values = service.slope_climbing(
             solutions, current_values, weights, costs, max_weights
         )
-        slope_climb_try_solutions, slope_climb_try_values = service.slope_climb_try_again_method(
+        slope_climb_try_solutions, slope_climb_try_values = service.slope_climb_try_again(
             solutions, current_values, weights, costs, max_weights, Tmax
         )
         
@@ -228,29 +228,30 @@ def all_methods_knapsack():
         tempera_values = []
         for i in range(len(solutions)):
             tempera_solution, tempera_value = service.tempera(
-                n=n,
-                max_weights=max_weights,
-                weights=weights,
-                costs=costs,
-                solutions=solutions,
-                Tmax=Tmax
+                max_weight=max_weights[i],
+                solution=solutions[i],
+                weights=weights[i],
+                costs=costs[i],
+                fr=fr,
+                tf=tf,
+                ti=ti,
+                va=current_values[i]
             )
             tempera_solutions.append(tempera_solution)
             tempera_values.append(tempera_value)
 
         return jsonify({
-            'initial_solutions': solutions,
             'slope_climb': {
                 'solutions': slope_climb_solutions,
-                'values': slope_climb_values
+                'current_values': slope_climb_values
             },
             'slope_climb_try': {
                 'solutions': slope_climb_try_solutions,
-                'values': slope_climb_try_values
+                'current_values': slope_climb_try_values
             },
-            'tempera': {
+            'temperature': {
                 'solutions': tempera_solutions,
-                'values': tempera_values
+                'current_values': tempera_values
             }
         })
     except KeyError as e:
@@ -259,6 +260,57 @@ def all_methods_knapsack():
     except Exception as e:
         logging.error(f"Error in all_methods_knapsack: {e}")
         abort(500, description=str(e))
+
+@app.route('/calc/knapsack/genetic_algorithm', methods=['POST'])
+def genetic_algorithm_knapsack():
+    data = get_json_data()
+    try:
+        costs = data['costs']
+        lengths = data['lengths']
+        weights = data['weights']
+        max_weights = data['maximum_weights']
+        generations = data.get('generations', 1000)
+        mutation_rate = data.get('mutation_rate', 0.01)
+        population_size = data.get('population_size', 100)
+        cross_over_rate = data.get('cross_over_rate', 0.7)
+        keep_individuals_rate = data.get('keep_individuals', 0.1)
+        
+        solutions = []
+        for i in range(len(lengths)):
+            initial_solution, final_solution, initial_value, final_value = service.genetic_algorithm(
+                length=lengths[i],
+                max_weight=max_weights[i],
+                cost=costs[i],
+                weight=weights[i],
+                population_size=population_size,
+                generations=generations,
+                mutation_rate=mutation_rate,
+                keep_individuals_rate=keep_individuals_rate,
+                cross_over_rate=cross_over_rate,
+            )
+            solutions.append({
+                'initial_solution': initial_solution,
+                'final_solution': final_solution,
+                'initial_value': initial_value,
+                'final_value': final_value
+            })
+            
+        
+        return jsonify({
+            'solutions': solutions,
+        })
+    except KeyError as e:
+        logging.error(f"Missing key: {e}")
+        abort(400, description=f"Missing key: {e}")
+    except Exception as e:
+        logging.error(f"Error in genetic_algorithm_knapsack: {e}")
+        abort(500, description=str(e))
+
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 errors."""
+    logging.error(f"404 Error: {error}")
+    return jsonify({'error': 'Not Found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
