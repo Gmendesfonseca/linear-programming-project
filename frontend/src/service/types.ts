@@ -56,3 +56,59 @@ export type AllResponseData = {
   slope_climbing_try: ResponseData;
   temperature: ResponseData;
 };
+
+// API Response Types
+export type MethodResponseData = {
+  solutions: number[][];
+  current_values: number[];
+};
+
+// Individual method response types
+export type SlopeClimbingResponse = MethodResponseData;
+export type SlopeClimbingTryResponse = MethodResponseData;
+export type TemperatureResponse = MethodResponseData;
+
+// Problem generation response
+export type GenerateKnapsackProblemResponse = {
+  problem: {
+    costs: number[][];
+    weights: number[][];
+    knapsacks_length: number[];
+    minimum_weight: number;
+    maximum_weight: number;
+  };
+};
+
+// Initial solution response
+export type InitialSolutionResponse = {
+  solutions: number[][];
+};
+
+// Evaluation response
+export type EvaluationResponse = {
+  current_values: number[];
+};
+
+// Genetic algorithm types
+export type GeneticAlgorithmParams = {
+  costs: number[][];
+  lengths: number[];
+  weights: number[][];
+  maximum_weights: number[];
+  generations?: number;
+  mutation_rate?: number;
+  population_size?: number;
+  cross_over_rate?: number;
+  keep_individuals?: number;
+};
+
+export type GeneticAlgorithmSolution = {
+  initial_solution: number[];
+  final_solution: number[];
+  initial_value: number;
+  final_value: number;
+};
+
+export type GeneticAlgorithmResponse = {
+  solutions: GeneticAlgorithmSolution[];
+};

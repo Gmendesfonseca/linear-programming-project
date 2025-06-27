@@ -241,11 +241,11 @@ def all_methods_knapsack():
             tempera_values.append(tempera_value)
 
         return jsonify({
-            'slope_climb': {
+            'slope_climbing': {
                 'solutions': slope_climb_solutions,
                 'current_values': slope_climb_values
             },
-            'slope_climb_try': {
+            'slope_climbing_try': {
                 'solutions': slope_climb_try_solutions,
                 'current_values': slope_climb_try_values
             },

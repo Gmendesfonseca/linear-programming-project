@@ -1,7 +1,9 @@
+import { lazy } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
-import Home from '@/pages/Home';
-import BasicMethods from '@/pages/BasicMethods';
-import GeneticAlgorithms from '@/pages/GeneticAlgorithms';
+const Home = lazy(() => import('@/pages/Home'));
+const BasicMethods = lazy(() => import('@/pages/BasicMethods'));
+const GeneticAlgorithms = lazy(() => import('@/pages/GeneticAlgorithms'));
+const ReportsController = lazy(() => import('@/pages/Reports'));
 // import Encosta from '@/pages/Encosta';
 
 export type RouteType = {
@@ -33,6 +35,10 @@ export function createRoutes() {
     {
       path: '/genetic-algorithms',
       element: <GeneticAlgorithms />,
+    },
+    {
+      path: '/reports',
+      element: <ReportsController />,
     },
     // {
     //   path: '/encosta',

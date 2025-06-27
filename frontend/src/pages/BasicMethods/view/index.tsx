@@ -11,16 +11,16 @@ import {
 } from 'react-hook-form';
 
 interface BasicMethodsView {
+  loading: boolean;
+  disableButton: boolean;
+  allData: DataInterface[];
   method: Method | 'default';
-  setMethod: React.Dispatch<React.SetStateAction<Method | 'default'>>;
-  setBiggestKnapsackLength: (length: number) => void;
-  setBiggestKnapsackWeight: (weight: number) => void;
   onSubmit: SubmitHandler<FormInputs>;
   register: UseFormRegister<FormInputs>;
+  setBiggestKnapsackLength: (length: number) => void;
+  setBiggestKnapsackWeight: (weight: number) => void;
   handleSubmit: UseFormHandleSubmit<FormInputs, FormInputs>;
-  disableButton: boolean;
-  loading: boolean;
-  allData: DataInterface[]; // Use appropriate type for allData
+  setMethod: React.Dispatch<React.SetStateAction<Method | 'default'>>;
 }
 
 export const BasicMethodsView: React.FC<BasicMethodsView> = ({

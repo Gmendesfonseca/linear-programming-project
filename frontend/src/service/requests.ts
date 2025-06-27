@@ -1,13 +1,21 @@
 import {
   CalcParams,
   GenerateKnapsackProblemParams,
+  GenerateKnapsackProblemResponse,
   InitialBagSolutionParams,
+  InitialSolutionResponse,
   EvaluateBagSolutionParams,
+  EvaluationResponse,
   SlopeClimbingTryParams,
+  SlopeClimbingTryResponse,
   SlopeClimbingParams,
+  SlopeClimbingResponse,
   TemperatureParams,
+  TemperatureResponse,
   AllResponseData,
   AllMethodsParams,
+  GeneticAlgorithmParams,
+  GeneticAlgorithmResponse,
 } from './types';
 
 const BASE_URL = 'http://localhost:5000';
@@ -38,7 +46,7 @@ export async function generateKnapsackProblem({
   knapsacks_length,
   minimum_weight,
   maximum_weight,
-}: GenerateKnapsackProblemParams) {
+}: GenerateKnapsackProblemParams): Promise<GenerateKnapsackProblemResponse> {
   const response = await fetch(`${BASE_URL}/calc/knapsack/problem`, {
     method: 'POST',
     headers: {
@@ -58,7 +66,7 @@ export async function initialBagSolution({
   weights,
   maximum_weights,
   knapsacks_length,
-}: InitialBagSolutionParams) {
+}: InitialBagSolutionParams): Promise<InitialSolutionResponse> {
   const response = await fetch(`${BASE_URL}/calc/knapsack/initial_solution`, {
     method: 'POST',
     headers: {
@@ -76,7 +84,7 @@ export async function initialBagSolution({
 
 export async function evaluateBagSolution({
   knapsacks,
-}: EvaluateBagSolutionParams) {
+}: EvaluateBagSolutionParams): Promise<EvaluationResponse> {
   const response = await fetch(`${BASE_URL}/calc/knapsack/evaluate_solution`, {
     method: 'POST',
     headers: {
@@ -94,7 +102,7 @@ export async function sendSlopeClimbingData({
   solutions,
   maximum_weights,
   current_values,
-}: SlopeClimbingParams) {
+}: SlopeClimbingParams): Promise<SlopeClimbingResponse> {
   const response = await fetch(`${BASE_URL}/calc/knapsack/slope_climb`, {
     method: 'POST',
     headers: {
@@ -119,7 +127,7 @@ export async function sendSlopeClimbingTryData({
   solutions,
   maximum_weights,
   current_values,
-}: SlopeClimbingTryParams) {
+}: SlopeClimbingTryParams): Promise<SlopeClimbingTryResponse> {
   const response = await fetch(
     `${BASE_URL}/calc/knapsack/slope_climb_try_again`,
     {
@@ -150,7 +158,7 @@ export async function sendTemperatureData({
   maximum_weights,
   final_temperature,
   initial_temperature,
-}: TemperatureParams) {
+}: TemperatureParams): Promise<TemperatureResponse> {
   const response = await fetch(`${BASE_URL}/calc/knapsack/tempera`, {
     method: 'POST',
     headers: {
@@ -178,6 +186,38 @@ export async function sendAllMethodsData(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function sendGeneticAlgorithmData({
+  costs,
+  lengths,
+  weights,
+  maximum_weights,
+  generations = 1000,
+  mutation_rate = 0.01,
+  population_size = 100,
+  cross_over_rate = 0.7,
+  keep_individuals = 0.1,
+}: GeneticAlgorithmParams): Promise<GeneticAlgorithmResponse> {
+  const response = await fetch(`${BASE_URL}/calc/knapsack/genetic_algorithm`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      costs,
+      lengths,
+      weights,
+      maximum_weights,
+      generations,
+      mutation_rate,
+      population_size,
+      cross_over_rate,
+      keep_individuals,
+    }),
   });
   const data = await response.json();
   return data;
