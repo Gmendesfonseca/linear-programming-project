@@ -29,7 +29,7 @@ interface ReportsViewProps {
   hasResults: boolean;
   onConfigChange: (field: keyof ProblemConfig, value: string | number) => void;
   onRunExperiments: () => Promise<void>;
-  onRunAllMethods: () => Promise<any>;
+  onRunAllMethods: () => Promise<void>;
 }
 
 export const ReportsView: React.FC<ReportsViewProps> = ({

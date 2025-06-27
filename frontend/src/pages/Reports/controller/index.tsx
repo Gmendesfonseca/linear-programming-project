@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useKnapsackSetup } from '@/pages/BasicMethods/hooks/useKnapsackSetup';
 import { ReportsView } from '../view';
-import { ReportsService, prepareMethodResults } from '../service';
+import { ReportsService } from '../service';
+import { prepareMethodResults } from '../utils/prepareMethodResults';
 
 interface ProblemConfig {
   problemType: string;
