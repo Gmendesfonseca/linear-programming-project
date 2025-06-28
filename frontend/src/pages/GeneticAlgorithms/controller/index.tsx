@@ -6,33 +6,12 @@ import {
 } from '@/service/types';
 import { useKnapsackSetup } from '@/hooks/useKnapsackSetup';
 import { GeneticAlgorithmsView } from '../view';
-
-interface AGConfig {
-  problemSize: number;
-  populationSize: number;
-  crossoverRate: number;
-  mutationRate: number;
-  generations: number;
-  generationInterval: number;
-  keepIndividuals: number;
-  capacity: number;
-}
-
-interface AnalysisConfig {
-  populationSize: number;
-  crossoverRate: number;
-  mutationRate: number;
-  generations: number;
-}
-
-interface AnalysisResult {
-  config: AnalysisConfig;
-  result: GeneticAlgorithmResponse;
-}
-
-interface ExtendedGeneticAlgorithmResponse extends GeneticAlgorithmResponse {
-  analysis?: AnalysisResult[];
-}
+import {
+  AGConfig,
+  AnalysisConfig,
+  AnalysisResult,
+  ExtendedGeneticAlgorithmResponse,
+} from '../types';
 
 export const GeneticAlgorithmsController = () => {
   const [config, setConfig] = useState<AGConfig>({

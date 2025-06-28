@@ -5,33 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardAction, CardContent } from '@/components/ui/card';
-
-interface AGConfig {
-  problemSize: number;
-  populationSize: number;
-  crossoverRate: number;
-  mutationRate: number;
-  generations: number;
-  generationInterval: number;
-  keepIndividuals: number;
-  capacity: number;
-}
-
-interface AnalysisConfig {
-  populationSize: number;
-  crossoverRate: number;
-  mutationRate: number;
-  generations: number;
-}
-
-interface AnalysisResult {
-  config: AnalysisConfig;
-  result: GeneticAlgorithmResponse;
-}
-
-interface ExtendedGeneticAlgorithmResponse extends GeneticAlgorithmResponse {
-  analysis?: AnalysisResult[];
-}
+import { AGConfig, ExtendedGeneticAlgorithmResponse } from '../types';
 
 interface GeneticAlgorithmsViewProps {
   config: AGConfig;
