@@ -23,10 +23,10 @@ interface GeneticAlgorithmsViewProps {
   knapsacksLengths: number[];
   problemGenerated: boolean;
   calculateBestValue: (
-    solutions: GeneticAlgorithmResponse['solutions'],
+    solutions: GeneticAlgorithmResponse['solutions']
   ) => number;
   calculateTotalValue: (
-    solutions: GeneticAlgorithmResponse['solutions'],
+    solutions: GeneticAlgorithmResponse['solutions']
   ) => number;
 }
 
@@ -49,7 +49,13 @@ export const GeneticAlgorithmsView: FC<GeneticAlgorithmsViewProps> = ({
 }) => {
   return (
     <MainLayout>
-      <Card style={{ padding: '20px', marginBottom: '20px' }}>
+      <Card
+        style={{
+          padding: '20px',
+          marginBottom: '20px',
+          width: '100%',
+        }}
+      >
         <h1 className="text-3xl font-bold mb-6">Algoritmo Genético</h1>
 
         {/* Configuration Section */}

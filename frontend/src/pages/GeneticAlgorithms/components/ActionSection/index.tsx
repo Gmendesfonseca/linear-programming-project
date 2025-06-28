@@ -17,7 +17,7 @@ export const ActionSection = ({
         <Button
           onClick={generateProblem}
           disabled={isGeneratingProblem}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="!px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isGeneratingProblem ? 'Gerando...' : 'Gerar Problema'}
         </Button>
@@ -25,7 +25,7 @@ export const ActionSection = ({
         <Button
           onClick={executeAG}
           disabled={isLoading || !problemGenerated}
-          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="!px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Executando...' : 'Executar AG'}
         </Button>
@@ -33,7 +33,7 @@ export const ActionSection = ({
         <Button
           onClick={analyzeAG}
           disabled={isLoading || !problemGenerated}
-          className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="!px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Analisando...' : 'Analisar AG'}
         </Button>

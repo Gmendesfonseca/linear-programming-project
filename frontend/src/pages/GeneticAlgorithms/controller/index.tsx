@@ -26,7 +26,7 @@ export const GeneticAlgorithmsController = () => {
   });
 
   const [result, setResult] = useState<ExtendedGeneticAlgorithmResponse | null>(
-    null,
+    null
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingProblem, setIsGeneratingProblem] = useState(false);
@@ -53,7 +53,7 @@ export const GeneticAlgorithmsController = () => {
     try {
       await setupKnapsacks(config.problemSize, config.capacity);
       setProblemGenerated(true);
-      setResult(null); // Clear previous results
+      setResult(null);
     } catch (error) {
       console.error('Error generating problem:', error);
       alert('Erro ao gerar problema. Verifique a conexão com o servidor.');
@@ -87,7 +87,7 @@ export const GeneticAlgorithmsController = () => {
     } catch (error) {
       console.error('Error executing AG:', error);
       alert(
-        'Erro ao executar Algoritmo Genético. Verifique a conexão com o servidor.',
+        'Erro ao executar Algoritmo Genético. Verifique a conexão com o servidor.'
       );
     } finally {
       setIsLoading(false);
@@ -102,7 +102,6 @@ export const GeneticAlgorithmsController = () => {
 
     setIsLoading(true);
     try {
-      // Predefined configurations for analysis as discussed in class
       const analysisConfigs: AnalysisConfig[] = [
         {
           populationSize: 50,
@@ -158,10 +157,8 @@ export const GeneticAlgorithmsController = () => {
         });
       }
 
-      // Display analysis results
       console.log('Analysis Results:', results);
 
-      // Combine all solutions for display
       const combinedSolutions = results.flatMap((r) => r.result.solutions);
 
       setResult({
@@ -171,7 +168,7 @@ export const GeneticAlgorithmsController = () => {
     } catch (error) {
       console.error('Error analyzing AG:', error);
       alert(
-        'Erro ao analisar Algoritmo Genético. Verifique a conexão com o servidor.',
+        'Erro ao analisar Algoritmo Genético. Verifique a conexão com o servidor.'
       );
     } finally {
       setIsLoading(false);
@@ -179,13 +176,13 @@ export const GeneticAlgorithmsController = () => {
   };
 
   const calculateBestValue = (
-    solutions: GeneticAlgorithmResponse['solutions'],
+    solutions: GeneticAlgorithmResponse['solutions']
   ) => {
     return Math.max(...solutions.map((sol) => sol.final_value));
   };
 
   const calculateTotalValue = (
-    solutions: GeneticAlgorithmResponse['solutions'],
+    solutions: GeneticAlgorithmResponse['solutions']
   ) => {
     return solutions.reduce((sum, sol) => sum + sol.final_value, 0);
   };

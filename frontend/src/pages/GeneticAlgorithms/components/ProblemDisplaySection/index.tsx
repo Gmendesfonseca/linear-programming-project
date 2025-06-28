@@ -11,18 +11,22 @@ export const ProblemDisplaySection = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <h3 className="font-medium text-gray-700 mb-2">Custos</h3>
-          <div className="bg-gray-50 p-3 rounded max-h-48 overflow-auto">
-            <pre className="text-sm">
-              {JSON.stringify(knapsackProblem.costs, null, 2)}
-            </pre>
+          <div className="bg-gray-50 !p-3 rounded max-h-48 overflow-auto">
+            <div className="text-sm">
+              {knapsackProblem.costs.map((cost, i) => (
+                <div key={i}>{cost.join(', ')}</div>
+              ))}
+            </div>
           </div>
         </div>
 
         <div>
           <h3 className="font-medium text-gray-700 mb-2">Pesos</h3>
-          <div className="bg-gray-50 p-3 rounded max-h-48 overflow-auto">
+          <div className="bg-gray-50 !p-3 rounded max-h-48 overflow-auto">
             <pre className="text-sm">
-              {JSON.stringify(knapsackProblem.weights, null, 2)}
+              {knapsackProblem.weights.map((cost, i) => (
+                <div key={i}>{cost.join(', ')}</div>
+              ))}
             </pre>
           </div>
         </div>
@@ -33,18 +37,18 @@ export const ProblemDisplaySection = ({
           <h3 className="font-medium text-gray-700 mb-2">
             Tamanhos das Mochilas
           </h3>
-          <div className="bg-gray-50 p-3 rounded">
-            <pre className="text-sm">
-              {JSON.stringify(knapsacksLengths, null, 2)}
-            </pre>
+          <div className="bg-gray-50 !p-3 rounded">
+            <pre className="text-sm">{knapsacksLengths.join(', ')}</pre>
           </div>
         </div>
 
         <div>
           <h3 className="font-medium text-gray-700 mb-2">Solução Inicial</h3>
-          <div className="bg-gray-50 p-3 rounded max-h-48 overflow-auto">
+          <div className="bg-gray-50 !p-3 rounded max-h-48 overflow-auto">
             <pre className="text-sm">
-              {JSON.stringify(initialSolution, null, 2)}
+              {initialSolution.map((solution, i) => (
+                <div key={i}>{solution.join(', ')}</div>
+              ))}
             </pre>
           </div>
         </div>
@@ -52,9 +56,11 @@ export const ProblemDisplaySection = ({
 
       <div className="mt-4">
         <h3 className="font-medium text-gray-700 mb-2">Valores Iniciais</h3>
-        <div className="bg-gray-50 p-3 rounded">
+        <div className="bg-gray-50 !p-3 rounded">
           <pre className="text-sm">
-            {JSON.stringify(currentValues, null, 2)}
+            {currentValues.map((value, i) => (
+              <div key={i}>{value.toFixed(2)}</div>
+            ))}
           </pre>
         </div>
         <p className="text-sm text-gray-600 mt-2">

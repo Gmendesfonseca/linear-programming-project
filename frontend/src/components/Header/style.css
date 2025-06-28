@@ -3,12 +3,12 @@
   height: 60px;
   width: 1000px;
   color: #3d3d3d;
-  border-radius: 8px;
   background-color: #fff;
-  border: 2px solid #d9d9d9;
 }
 
 .paths {
+  border-radius: 8px;
+  border: 2px solid #d9d9d9;
   display: flex;
   width: 100%;
   flex-direction: row;
@@ -23,7 +23,8 @@
   margin: 0px;
 
   & > * {
-    width: 320px;
+    width: 50%;
+    height: 100%;
     background-color: transparent;
     cursor: pointer;
     border-radius: 8px;
