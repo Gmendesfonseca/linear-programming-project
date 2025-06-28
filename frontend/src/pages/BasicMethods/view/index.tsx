@@ -9,6 +9,7 @@ import {
   UseFormHandleSubmit,
   UseFormRegister,
 } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 
 interface BasicMethodsView {
   loading: boolean;
@@ -57,7 +58,7 @@ export const BasicMethodsView: React.FC<BasicMethodsView> = ({
             marginTop: '16px',
           }}
         >
-          <button
+          <Button
             disabled={disableButton}
             style={{
               width: '200px',
@@ -73,7 +74,7 @@ export const BasicMethodsView: React.FC<BasicMethodsView> = ({
             type="submit"
           >
             {loading ? 'Carregando...' : 'Gerar'}
-          </button>
+          </Button>
         </div>
       </form>
       <DataView allData={allData} />

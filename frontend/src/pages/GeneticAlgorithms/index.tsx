@@ -6,6 +6,10 @@ import {
   GeneticAlgorithmResponse,
 } from '@/service/types';
 import { useKnapsackSetup } from '@/hooks/useKnapsackSetup';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardAction, CardContent } from '@/components/ui/card';
 
 interface AGConfig {
   problemSize: number;
@@ -213,21 +217,21 @@ const GeneticAlgorithms = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-6xl mx-auto">
+      <Card style={{ padding: '20px', marginBottom: '20px' }}>
         <h1 className="text-3xl font-bold mb-6">Algoritmo Genético</h1>
 
         {/* Configuration Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <CardContent>
           <h2 className="text-xl font-semibold mb-4">
             Configuração do AG/Problema
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Tamanho do Problema
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="5"
                 max="100"
@@ -240,10 +244,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Capacidade das Mochilas
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="10"
                 max="200"
@@ -256,10 +260,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Tamanho da População
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="10"
                 max="1000"
@@ -272,10 +276,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Taxa de Cruzamento
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="0"
                 max="1"
@@ -292,10 +296,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Taxa de Mutação
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="0"
                 max="1"
@@ -309,10 +313,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Número de Gerações
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="1"
                 max="10000"
@@ -325,10 +329,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Intervalo de Geração
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="1"
                 max="1000"
@@ -344,10 +348,10 @@ const GeneticAlgorithms = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
                 Manter Indivíduos (%)
-              </label>
-              <input
+              </Label>
+              <Input
                 type="number"
                 min="0"
                 max="1"
@@ -363,38 +367,38 @@ const GeneticAlgorithms = () => {
               />
             </div>
           </div>
-        </div>
+        </CardContent>
 
         {/* Action Buttons */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <CardAction>
           <h2 className="text-xl font-semibold mb-4">Ações</h2>
 
           <div className="flex flex-wrap gap-4">
-            <button
+            <Button
               onClick={generateProblem}
               disabled={isGeneratingProblem}
               className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {isGeneratingProblem ? 'Gerando...' : 'Gerar Problema'}
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={executeAG}
               disabled={isLoading || !problemGenerated}
               className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Executando...' : 'Executar AG'}
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={analyzeAG}
               disabled={isLoading || !problemGenerated}
               className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Analisando...' : 'Analisar AG'}
-            </button>
+            </Button>
           </div>
-        </div>
+        </CardAction>
 
         {/* Problem Data Display */}
         {problemGenerated && knapsackProblem.costs.length > 0 && (
@@ -597,7 +601,7 @@ const GeneticAlgorithms = () => {
             </div>
           </div>
         )}
-      </div>
+      </Card>
     </MainLayout>
   );
 };
