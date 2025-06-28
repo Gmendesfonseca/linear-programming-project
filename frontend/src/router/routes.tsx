@@ -18,11 +18,11 @@ export function createRoutes() {
   const routes: RouteType[] = [
     {
       path: '/*',
-      element: <Navigate to={'/basic-methods'} replace />,
+      element: <Navigate to={'/home'} replace />,
     },
     {
       path: '/',
-      element: <Navigate to={'/basic-methods'} replace />,
+      element: <Navigate to={'/home'} replace />,
     },
     {
       path: '/home',
