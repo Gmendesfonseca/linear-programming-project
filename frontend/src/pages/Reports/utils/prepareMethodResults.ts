@@ -1,11 +1,9 @@
-import { ExperimentResults } from '../types';
+import { ExperimentResults, MethodResult } from '../types';
 import { calculateStats } from './calculateStats';
 
-export function prepareMethodResults(results: ExperimentResults): Array<{
-  name: string;
-  data: number[];
-  stats: { min: number; max: number; avg: number; std: number };
-}> {
+export function prepareMethodResults(
+  results: ExperimentResults,
+): MethodResult[] {
   const baseResults = [
     { name: 'Soluções Iniciais', data: results.initialSolutions },
     { name: 'Subida de Encosta', data: results.hillClimbing },
@@ -33,5 +31,7 @@ export function prepareMethodResults(results: ExperimentResults): Array<{
   return [...baseResults, ...annealingResults].map((method) => ({
     ...method,
     stats: calculateStats(method.data),
+    executionTimes: [],
+    improvements: [],
   }));
 }
