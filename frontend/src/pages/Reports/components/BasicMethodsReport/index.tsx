@@ -16,7 +16,7 @@ export const BasicMethodsReport: React.FC<ResultsDisplayProps> = ({
 
   if (validResults.length === 0) {
     return (
-      <Card className="p-8 text-center">
+      <div className="flex flex-col items-center justify-center h-full !space-y-4">
         <div className="text-gray-400 text-4xl mb-4">📊</div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
           Nenhum resultado disponível
@@ -24,7 +24,7 @@ export const BasicMethodsReport: React.FC<ResultsDisplayProps> = ({
         <p className="text-gray-600">
           Execute os experimentos para visualizar os resultados
         </p>
-      </Card>
+      </div>
     );
   }
 

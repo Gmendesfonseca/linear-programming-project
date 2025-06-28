@@ -532,6 +532,7 @@ def ajusta_restricao(n, vet, desc, qd, c_max, cost):
     for i in range(qd):
         peso = evaluate_solution(desc[i], vet, cost)
         while peso > c_max:
+            log.debug(f"Descendente {i} excedeu o peso máximo: {peso} > {c_max}. Ajustando...")
             j = rd.randrange(n)
             if desc[i][j] == 1:
                 desc[i][j] = 0
