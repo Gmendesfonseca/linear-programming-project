@@ -4,7 +4,7 @@ import {
   initialBagSolution,
   evaluateBagSolution,
 } from '@/service/requests';
-import { KnapsackProblem } from '@/service/types';
+import { KnapsackProblem, Knapsacks } from '@/service/types';
 import { randomSplitInt } from '@/utils/randomSplit';
 import { MAX_ITEMS_WEIGHTS } from '@/utils/contants';
 
@@ -47,13 +47,17 @@ export function useKnapsackSetup() {
     });
     setInitialSolution(solutions);
 
-    const knapsacks = solutions.map((solution: number[], index: number) => ({
-      solution,
-      weights: problem.weights[index],
-      costs: problem.costs[index],
-    }));
+    const knapsacks: Knapsacks[] = solutions.map(
+      (solution: number[], index: number) => ({
+        solution: solution,
+        weights: problem.weights[index],
+        costs: problem.costs[index],
+      }),
+    );
 
-    const { current_values } = await evaluateBagSolution({ knapsacks });
+    const { current_values } = await evaluateBagSolution({
+      knapsacks,
+    });
     setCurrentValues(current_values);
 
     return {

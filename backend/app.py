@@ -277,6 +277,9 @@ def genetic_algorithm_knapsack():
         
         solutions = []
         for i in range(len(lengths)):
+            if len(costs[i]) != lengths[i] or len(weights[i]) != lengths[i]:
+                logging.error(f"Knapsack {i}: costs or weights length doesn't match declared length")
+                continue
             initial_solution, final_solution, initial_value, final_value = service.genetic_algorithm(
                 length=lengths[i],
                 max_weight=max_weights[i],

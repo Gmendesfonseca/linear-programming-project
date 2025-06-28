@@ -12,7 +12,7 @@ import { FormInputs } from '@/types';
 import { ResponseData } from '@/interfaces';
 import { BasicMethodsView } from '../view';
 import { DataInterface } from '../components/DataView';
-import { useKnapsackSetup } from '../hooks/useKnapsackSetup';
+import { useKnapsackSetup } from '../../../hooks/useKnapsackSetup';
 
 export const BasicMethodsController = () => {
   const [biggestKnapsackLength, setBiggestKnapsackLength] = useState(20);

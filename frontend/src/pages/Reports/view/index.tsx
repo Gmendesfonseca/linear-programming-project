@@ -1,26 +1,9 @@
 import React from 'react';
-
-interface ProblemConfig {
-  problemType: string;
-  solutionType: string;
-  minLimit: number;
-  maxLimit: number;
-  problemSize: number;
-  capacity: number;
-}
-
-interface StatResult {
-  min: number;
-  max: number;
-  avg: number;
-  std: number;
-}
-
-interface MethodResult {
-  name: string;
-  data: number[];
-  stats: StatResult;
-}
+import { MethodResult, ProblemConfig } from '../types';
+import { Label } from '@radix-ui/react-label';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardAction } from '@/components/ui/card';
 
 interface ReportsViewProps {
   loading: boolean;
@@ -46,15 +29,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
       <h1>Relatórios de Experimentos</h1>
 
       {/* Configuration Panel */}
-      <div
-        style={{
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          padding: '16px',
-          marginBottom: '20px',
-          backgroundColor: '#f9f9f9',
-        }}
-      >
+      <Card style={{ padding: '20px', marginBottom: '20px' }}>
         <h2>Configuração do Experimento</h2>
         <div
           style={{
@@ -64,26 +39,47 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           }}
         >
           <div>
-            <label>Tipo do Problema:</label>
-            <input
+            <Label>Tipo do Problema:</Label>
+            <Input
               type="text"
+              disabled
               value={config.problemType}
               onChange={(e) => onConfigChange('problemType', e.target.value)}
               style={{ width: '100%', padding: '8px', marginTop: '4px' }}
             />
           </div>
           <div>
-            <label>Tipo de Solução:</label>
-            <input
+            <Label>Tipo de Solução:</Label>
+            <Input
               type="text"
+              disabled
               value={config.solutionType}
               onChange={(e) => onConfigChange('solutionType', e.target.value)}
               style={{ width: '100%', padding: '8px', marginTop: '4px' }}
             />
           </div>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px',
+          }}
+        >
           <div>
-            <label>Limite Mínimo:</label>
-            <input
+            <Label>Limite Mínimo:</Label>
+            <Input
+              type="number"
+              value={config.minLimit}
+              onChange={(e) =>
+                onConfigChange('minLimit', parseInt(e.target.value))
+              }
+              style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+            />
+          </div>
+          <div>
+            <Label>Limite Máximo:</Label>
+            <Input
               type="number"
               value={config.maxLimit}
               onChange={(e) =>
@@ -93,19 +89,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             />
           </div>
           <div>
-            <label>Limite Máximo:</label>
-            <input
-              type="number"
-              value={config.maxLimit}
-              onChange={(e) =>
-                onConfigChange('maxLimit', parseInt(e.target.value))
-              }
-              style={{ width: '100%', padding: '8px', marginTop: '4px' }}
-            />
-          </div>
-          <div>
-            <label>Tamanho do Problema:</label>
-            <input
+            <Label>Tamanho do Problema:</Label>
+            <Input
               type="number"
               value={config.problemSize}
               onChange={(e) =>
@@ -115,8 +100,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             />
           </div>
           <div>
-            <label>Capacidade:</label>
-            <input
+            <Label>Capacidade:</Label>
+            <Input
               type="number"
               value={config.capacity}
               onChange={(e) =>
@@ -127,8 +112,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </div>
         </div>
 
-        <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
-          <button
+        <CardAction style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+          <Button
             onClick={onRunExperiments}
             disabled={loading}
             style={{
@@ -142,9 +127,9 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             }}
           >
             {loading ? 'Executando...' : 'Executar Experimentos'}
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={onRunAllMethods}
             disabled={loading}
             style={{
@@ -158,9 +143,9 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             }}
           >
             {loading ? 'Executando...' : 'Executar Todos os Métodos'}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardAction>
+      </Card>
 
       {/* Results Display */}
       {hasResults && (

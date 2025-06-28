@@ -1,30 +1,9 @@
 import { useState } from 'react';
-import { useKnapsackSetup } from '@/pages/BasicMethods/hooks/useKnapsackSetup';
+import { useKnapsackSetup } from '@/hooks/useKnapsackSetup';
 import { ReportsView } from '../view';
 import { ReportsService } from '../service';
 import { prepareMethodResults } from '../utils/prepareMethodResults';
-
-interface ProblemConfig {
-  problemType: string;
-  solutionType: string;
-  minLimit: number;
-  maxLimit: number;
-  problemSize: number;
-  capacity: number;
-}
-
-interface StatResult {
-  min: number;
-  max: number;
-  avg: number;
-  std: number;
-}
-
-interface MethodResult {
-  name: string;
-  data: number[];
-  stats: StatResult;
-}
+import { MethodResult, ProblemConfig } from '../types';
 
 export const ReportsController = () => {
   const [loading, setLoading] = useState(false);

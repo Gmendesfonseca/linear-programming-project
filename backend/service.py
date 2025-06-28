@@ -480,9 +480,9 @@ def descendentes(n, pop, fit, tp, tc, tm):
     log.debug("Gerando descendentes.")
     qd = 3 * tp
     desc = np.zeros((qd, n), int)
-    corte = rd.randint(1, n - 1)
+    corte = rd.randint(0, n - 1)
     i = 0
-    while i < qd:
+    while i < qd - 1:
         p1 = pop[roleta(fit, tp)]
         p2 = pop[roleta(fit, tp)]
         if rd.uniform(0, 1) <= tc:
@@ -557,20 +557,36 @@ def genetic_algorithm(length, weight, cost, max_weight, population_size, generat
     """
     log.debug("Iniciando algoritmo genético.")
     pop = pop_ini(length, population_size, weight, max_weight)
-    fit = aptidao(length, weight, pop, population_size, max_weight)
+    fit = aptidao(weight, pop, population_size, max_weight, cost)
     pop, fit = ordena(pop, fit)
     si = pop[0]
     log.debug(f"Solução inicial: {si}")
     for g in range(generations):
         log.debug(f"Geração {g}")
-        desc, qd = descendentes(length, pop, fit, population_size, cross_over_rate, mutation_rate)
-        desc = ajusta_restricao(length, weight, desc, qd, max_weight)
-        fit_d = aptidao(length, weight, desc, qd, max_weight)
+        desc, qd = descendentes(length, pop, fit, 
+                                population_size, cross_over_rate, mutation_rate)
+        desc = ajusta_restricao(length, weight, desc, qd, max_weight, cost)
+        log.debug(f"Descendentes gerados: {desc}")
+        
+        fit_d = aptidao(weight, desc, qd, max_weight, cost)
+        log.debug(f"Aptidão dos descendentes: {fit_d}")
+        
         pop, fit = ordena(pop, fit)
         desc, fit_d = ordena(desc, fit_d)
+        log.debug(f"População e descendentes ordenados.")
+        
         pop = nova_pop(pop, desc, population_size, keep_individuals_rate)
-        fit = aptidao(length, weight, pop, population_size, max_weight)
+        log.debug(f"Nova população gerada: {pop}")
+        
+        fit = aptidao(weight, pop, population_size, max_weight, cost)
+        log.debug(f"Aptidão final: {fit}")
+    
     pop, fit = ordena(pop, fit)
     sf = pop[0]
     log.debug(f"Solução final: {sf}")
-    return si, sf, evaluate_solution(si, weight, cost), evaluate_solution(sf, weight, cost)
+    
+    initial_value = evaluate_array(si, cost)
+    final_value = evaluate_array(sf, cost)
+    log.debug(f"Valor da solução inicial: {initial_value}, Valor da solução final: {final_value}")
+    
+    return si.tolist(), sf.tolist(), float(initial_value), float(final_value)

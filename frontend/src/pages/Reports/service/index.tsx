@@ -3,7 +3,7 @@ import {
   handleSlopeClimbingTryMethod,
   handleTemperatureMethod,
 } from '@/pages/BasicMethods/helpers';
-import { useKnapsackSetup } from '@/pages/BasicMethods/hooks/useKnapsackSetup';
+import { useKnapsackSetup } from '@/hooks/useKnapsackSetup';
 import {
   AllResults,
   ExperimentResults,

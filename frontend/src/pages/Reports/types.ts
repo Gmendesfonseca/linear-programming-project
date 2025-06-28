@@ -45,3 +45,25 @@ export interface PayloadBase {
   current_values: number[];
   maximum_weights: number[];
 }
+
+export interface ProblemConfig {
+  problemType: string;
+  solutionType: string;
+  minLimit: number;
+  maxLimit: number;
+  problemSize: number;
+  capacity: number;
+}
+
+export interface StatResult {
+  min: number;
+  max: number;
+  avg: number;
+  std: number;
+}
+
+export interface MethodResult {
+  name: string;
+  data: number[];
+  stats: StatResult;
+}

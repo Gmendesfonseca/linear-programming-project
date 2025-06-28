@@ -23,7 +23,7 @@ export type GenerateKnapsackProblemParams = {
 };
 
 export type InitialBagSolutionParams = {
-  weights: number[];
+  weights: number[][];
   maximum_weights: number[];
   knapsacks_length: number[];
 };
@@ -90,7 +90,7 @@ export type EvaluationResponse = {
 };
 
 // Genetic algorithm types
-export type GeneticAlgorithmParams = {
+export interface GeneticAlgorithmParams {
   costs: number[][];
   lengths: number[];
   weights: number[][];
@@ -100,15 +100,15 @@ export type GeneticAlgorithmParams = {
   population_size?: number;
   cross_over_rate?: number;
   keep_individuals?: number;
-};
+}
 
-export type GeneticAlgorithmSolution = {
+interface GeneticAlgorithmSolution {
   initial_solution: number[];
   final_solution: number[];
   initial_value: number;
   final_value: number;
-};
+}
 
-export type GeneticAlgorithmResponse = {
+export interface GeneticAlgorithmResponse {
   solutions: GeneticAlgorithmSolution[];
-};
+}
