@@ -29,6 +29,11 @@ export const Header = () => {
               Algoritmos Genéticos
             </Link>
           )}
+          {path !== '/reports' && (
+            <Link to={'/reports'} replace>
+              Relatórios
+            </Link>
+          )}
           {/* {path !== '/problem-description' && (
           <Link to={'/problem-description'} replace>
             Descrição do Problema
