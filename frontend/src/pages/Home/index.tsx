@@ -89,13 +89,13 @@ const Home = () => {
               <p className="text-gray-700 !mb-4">
                 O problema da mochila é um problema clássico de otimização
                 combinatória onde se deve selecionar itens com diferentes pesos
-                e valores para maximizar o valor total sem exceder a capacidade
-                da mochila.
+                e custos para minimizar o custo por peso total sem exceder a
+                capacidade da mochila.
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Cada item possui peso e valor específicos</li>
+                <li>Cada mochila possui peso e custo</li>
                 <li>Capacidade limitada da mochila</li>
-                <li>Objetivo: maximizar valor total</li>
+                <li>Objetivo: minimizar o custo total</li>
               </ul>
             </div>
             <div>
